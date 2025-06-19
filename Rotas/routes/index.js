@@ -20,14 +20,28 @@ router.get("/criar", (req, res, next) =>{
 
 })
 
-router.get("/:uid", (req, res, next) =>{
-  if (req.session.user && req.session.user.id == req.params.uid) {
-    res.render('dashboard', {usuario: req.session.user})
-  } else {
-    req.flash('error', 'Você pricisa logar para entrar.')
-    res.redirect('/login')
+router.get("/:uid", async (req, res, next) =>{
+  try{
+    if (req.session.user && req.session.user.id == req.params.uid){
+      const userId = req.session.user.id
+
+      const sql = "SELECT * FROM anotacoes WHERE user_id  = ? AND deleted_at IS NULL ORDER BY updated_at DESC"
+      const [anotacoes] = await db.query(sql, [userId])
+
+      console.log(`Encontradas ${anotacoes.length} anotações para o usuário ${userId}.`)
+      res.render('dashboard', {
+        usuario: req.session.user,
+        anotacoes: anotacoes 
+      })
+    } else {
+      req.flash('error', 'Você precisa precisa logar para estar na próxima página.')
+      res.redirect('/login')
+    }
+  } catch (error) {
+    console.error('ERRO ao buscar anotações: ', error)
+    next(error)
   }
-  })
+})
 
 router.get("/:uid/:nid/excluir", (req, res, next) =>{
 

@@ -70,21 +70,16 @@ p {
   width: 100%;
   max-width: 500px;
 }
-
-
 .grupo-formulario {
   margin-bottom: 20px;
   text-align: left;
 }
-
 .grupo-formulario label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
   color: #555;
 }
-
-
 .campo-formulario {
   width: 100%;
   padding: 12px;
@@ -93,7 +88,6 @@ p {
   box-sizing: border-box;
   font-size: 16px;
 }
-
 .campo-formulario:focus {
   outline: none;
   border-color: #3498db;
@@ -143,4 +137,24 @@ p {
   background-color: #f2dede;
   border-color: #ebccd1;
   text-align: center;
+}
+
+/*--- Estilos para a Lista de Anotações ---*/
+
+.lista-anotacoes {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+.item-anotacao {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.nome-anotacao {
+  font-weight: bold;
+  font-size: 18px;
 }
