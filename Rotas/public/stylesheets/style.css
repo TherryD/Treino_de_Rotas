@@ -1,3 +1,4 @@
+/*Estilo do index.ejs*/
 body {
   padding: 0;
   margin: 0;
@@ -56,4 +57,70 @@ p {
 }
 .btn-cadastro:hover {
   background-color: #b9bbbb;
+}
+
+
+/* Estilo do cadastro */
+/* --- ESTILOS PARA FORMULÁRIOS (COM NOMES EM PORTUGUÊS) --- */
+
+/* Container para os formulários de login e cadastro */
+.painel-formulario {
+  text-align: center;
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Grupo de formulário (label + input) */
+.grupo-formulario {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.grupo-formulario label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Campos de input (texto, email, senha) */
+.campo-formulario {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+  font-size: 16px;
+}
+
+.campo-formulario:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Modificador para o botão ocupar la largura toda */
+.btn-largo {
+  width: 100%;
+  padding: 15px;
+}
+
+/* Rodapé do formulário com link */
+.rodape-formulario {
+  margin-top: 25px;
+  font-size: 14px;
+}
+
+.rodape-formulario a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.rodape-formulario a:hover {
+  text-decoration: underline;
 }
