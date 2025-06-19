@@ -1,8 +1,59 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #f5f8f7;
+  color: #2c2b2b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
-
-a {
-  color: #00B7FF;
+.painel-principal {
+  text-align: center;
+  background-color: white;
+  padding: 20px 50px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+h1 {
+  color: #1d2630;
+  margin-bottom: 5px;
+}
+p {
+  color: #637272;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+.actions {
+  display: flex;
+  gap: 15px; 
+  justify-content: center;
+}
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 15px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px); 
+}
+.btn-login {
+  background-color: #428ec0;
+  color: white;
+}
+.btn-login:hover {
+  background-color: #1d6ea3;
+}
+.btn-cadastro {
+  background-color: #f1f3f3;
+  color: #2b3a49;
+  border: 1px solid #828688;
+}
+.btn-cadastro:hover {
+  background-color: #b9bbbb;
 }
