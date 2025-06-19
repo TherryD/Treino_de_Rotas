@@ -17,7 +17,12 @@ router.get("/cadastro", (req, res, next) =>{
 })
 
 router.get("/criar", (req, res, next) =>{
-
+  if(req.session.user) {
+    res.render('anotacao', {usuario: req.session.user})
+  } else {
+    req.flash('error','Você precisa precisa logar para estar na próxima página.')
+    res.redirect('/login')
+  }
 })
 
 router.get("/:uid", async (req, res, next) =>{
@@ -109,6 +114,28 @@ router.post("/cadastro", async(req, res, next) =>{
       req.flash('error', 'Este e-mail já está em uso. Tente outro')
       return res.redirect('/cadastro')
     }
+    next(error)
+  }
+})
+
+router.post('/criar', async (req, res, next) =>{
+  if (!req.session.user) {
+    req.flash('error', 'Você precisa precisa estar logado para criar uma anotação.')
+    return res.redirect('/login')
+  }
+
+  try{
+    const {nome, descricao} = req.body
+    const userId = req.session.user.id
+    const sql = "INSERT INTO anotacoes (nome, descricao, user_id) VALUES (?, ?, ?)"
+    const values = [nome, descricao, userId]
+
+    await db.query(sql, values)
+
+    console.log(`Nova anotação "${nome}" criada para o usuário ${userId}.`)
+    res.redirect(`/${userId}`)
+  } catch (error) {
+    console.error("ERRO ao criar anotação:", error)
     next(error)
   }
 })
