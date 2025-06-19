@@ -13,6 +13,13 @@
         </div>
         
         <h1>Crie sua Conta</h1>
+        
+        <% if (messages && messages.length > 0) { %>
+            <div class="alerta-erro"> 
+                <%= messages[0] %>
+            </div>
+        <% } %>
+
         <form action="/cadastro" method="POST">
             <div class="grupo-formulario">
                 <label for="nome">Nome Completo</label>

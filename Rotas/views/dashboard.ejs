@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Principal</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <div class="painel-principal">
+    <% if (usuario) { %>
+      <h1>Bem-vindo(a), <%= usuario.nome %>!</h1>
+      <p>Este é o seu painel principal. Em breve, suas anotações aparecerão aqui.</p>
+    <% } else { %>
+      <h1>Erro</h1>
+      <p>Você precisa estar logado para ver esta página.</p>
+      <a href="/login">Fazer Login</a>
+    <% } %>
+  </div>
+</body>
+</html>

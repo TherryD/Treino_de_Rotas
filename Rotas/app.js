@@ -6,6 +6,10 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const { Cookie } = require('express-session');
+
+var session = require('express-session');
+var flash = require('connect-flash')
 
 var app = express();
 
@@ -17,6 +21,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+  secret: 'Seu_segredo_Super_Secreto',
+  resave: false,
+  saveUninitialized: true,
+  Cookie: {secure: false}
+}))
+app.use(flash())
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

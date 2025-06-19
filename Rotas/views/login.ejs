@@ -12,6 +12,12 @@
             <a href="/">&larr; </a>
         </div>
         <h1>Login</h1>
+
+        <% if (messages && messages.length > 0) { %>
+            <div class="alerta-erro">
+                <%= messages[0] %>
+            </div>
+        <% } %>
         <p>Bem-vindo de volta! Acesse sua conta.</p>
 
         <form action="/login" method="POST">

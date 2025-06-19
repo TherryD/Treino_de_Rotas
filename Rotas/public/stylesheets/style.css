@@ -1,4 +1,4 @@
-/*Estilo do index.ejs*/
+/*--- Estilo do index.ejs ---*/
 body {
   padding: 0;
   margin: 0;
@@ -60,7 +60,7 @@ p {
 }
 
 
-/* Estilo do cadastro e do login*/
+/*--- Estilo do cadastro e do login ---*/
 .painel-formulario {
   text-align: center;
   background-color: white;
@@ -116,7 +116,7 @@ p {
   text-decoration: underline;
 }
 
-/*flecha para voltar para a tela anterio*/
+/*--- flecha para voltar para a tela anterio ---*/
 .voltar {
   text-align: left;
   margin-bottom: 25px;
@@ -130,4 +130,17 @@ p {
 .voltar a:hover {
   text-decoration: underline;
   color: #000;
+}
+
+/*--- Estilo para os alertas de erro--- */
+
+.alerta-erro {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  text-align: center;
 }
