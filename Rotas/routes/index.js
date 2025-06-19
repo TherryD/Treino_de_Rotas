@@ -41,7 +41,32 @@ router.get("/:uid/:nid/editar", (req, res, next) =>{
 })
 
 // Rotas POST
-router.post("/login",  (req, res, next) =>{
+router.post("/login",  async (req, res, next) =>{
+  const {email, senha} = req.body
+
+  try {
+    const sql = "SELECT * FROM usuarios WHERE email = ?"
+    const [users] = await db.query(sql, [email])
+
+    if (users.length === 0) {
+      console.log("Login falhou: Usuário não encontrado.")
+
+      return res.redirect('/login')
+    }
+
+    const user = users[0];
+    const passwordMatch = await bcrypt.compare(senha, user.senha_hash)
+  
+    if (!passwordMatch) {
+      console.log("Login falhou: Senha incorreta. ")
+      return res.redirect('/login')
+    }
+
+    res.redirect(`/${user.id}`)
+  } catch (error) {
+    console.error("ERRO durante o login", error)
+    next(error)
+  }
 
 })
   

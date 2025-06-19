@@ -60,21 +60,18 @@ p {
 }
 
 
-/* Estilo do cadastro */
-/* --- ESTILOS PARA FORMULÁRIOS (COM NOMES EM PORTUGUÊS) --- */
-
-/* Container para os formulários de login e cadastro */
+/* Estilo do cadastro e do login*/
 .painel-formulario {
   text-align: center;
   background-color: white;
-  padding: 40px;
+  padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
 }
 
-/* Grupo de formulário (label + input) */
+
 .grupo-formulario {
   margin-bottom: 20px;
   text-align: left;
@@ -87,13 +84,13 @@ p {
   color: #555;
 }
 
-/* Campos de input (texto, email, senha) */
+
 .campo-formulario {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+  box-sizing: border-box;
   font-size: 16px;
 }
 
@@ -102,25 +99,35 @@ p {
   border-color: #3498db;
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
-
-/* Modificador para o botão ocupar la largura toda */
 .btn-largo {
   width: 100%;
   padding: 15px;
 }
-
-/* Rodapé do formulário com link */
 .rodape-formulario {
   margin-top: 25px;
   font-size: 14px;
 }
-
 .rodape-formulario a {
   color: #3498db;
   text-decoration: none;
   font-weight: bold;
 }
-
 .rodape-formulario a:hover {
   text-decoration: underline;
+}
+
+/*flecha para voltar para a tela anterio*/
+.voltar {
+  text-align: left;
+  margin-bottom: 25px;
+}
+.voltar a {
+  text-decoration: none;
+  color: #555;
+  font-weight: bold;
+  font-size: 25px;
+}
+.voltar a:hover {
+  text-decoration: underline;
+  color: #000;
 }
