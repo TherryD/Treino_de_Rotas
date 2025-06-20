@@ -53,6 +53,15 @@ router.get('/:uid/perfil/editar', (req, res, next) =>{
   }
 })
 
+router.get("/:uid/perfil/excluir", (req, res, next) =>{
+  if(req.session.user && req.session.user.id == req.params.uid) {
+    res.render('excluir_perfil', {usuario: req.session.user})
+  }else{
+    req.flash('error', 'Acesso não autorizado.')
+    res.redirect('/login')
+  }
+})
+
 router.get("/:uid/:nid/excluir", async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -237,6 +246,46 @@ router.post('/criar', async (req, res, next) =>{
   }
 })
 
+router.post('/:uid/perfil/editar', async (req, res, next) =>{
+  try {
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid} = req.params
+      const {nome} = req.body
+
+      const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
+      await db.query(sql, [nome, uid])
+
+      req.session.user.nome = nome
+      console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
+      res.redirect(`/${uid}`)
+    } else {
+      req.flash('error', "Acesso não autorizado.")
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
+router.post('/:uid/perfil/excluir', async (req, res, next) =>{
+  try{
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const {uid} = req.params
+
+      const sql = "DELETE FROM usuarios WHERE id = ?"
+      await db.query(sql, [uid])
+
+      req.session.destroy(err =>{
+        if(err){
+          return next(err)
+        }
+        res.redirect('/')
+      })
+    } else{
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch(error){next(error)}
+})
+
 router.post('/:uid/:nid/excluir', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -306,26 +355,6 @@ router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
     }
   } catch (error) {next(error)}
 })
-
-router.post('/:uid/perfil/editar', async (req, res, next) =>{
-  try {
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid} = req.params
-      const {nome} = req.body
-
-      const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
-      await db.query(sql, [nome, uid])
-
-      req.session.user.nome = nome
-      console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
-      res.redirect(`/${uid}`)
-    } else {
-      req.flash('error', "Acesso não autorizado.")
-      res.redirect('/login')
-    }
-  } catch (error) {next(error)}
-})
-
 // --- ROTA PUT ---
 router.put("/:uid/:nid", (req, res, next) =>{
 
