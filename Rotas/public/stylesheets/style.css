@@ -181,10 +181,10 @@ p {
 }
 
 /*--- Excluir Anotações ---*/
-.bnt-excluir {
+.btn-excluir {
   background-color: #ff402b;
   color: white
 }
-.bnt-excluir:hover {
+.btn-excluir:hover {
   background-color: #a5291c;
 }
