@@ -23,10 +23,13 @@
       <% if (anotacoes.length > 0) { %>
         <ul class="lista-anotacoes">
           <% anotacoes.forEach(function(anotacao) { %>
-            <li class="item-anotacao">
-              <span class="nome-anotacao"><%= anotacao.nome %></span>
-              </li>
-          <% }); %>
+            <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="linh-anotacao">
+                <li class="item-anotacao">
+                    <span class="nome-anotacao"><%= anotacao.nome %></span>
+                </li>
+            </a>
+            
+        <% }); %>
         </ul>
       <% } else { %>
         <p>Você ainda não tem nenhuma anotação. Que tal criar a primeira?</p>

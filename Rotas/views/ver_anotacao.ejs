@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= anotacao.nome %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <div class="painel-principal">
+        <div class="voltar">
+            <a href="/<%= usuario.id %>">&larr;</a>
+        </div>
+        <div class="conteudo-anotacao">
+            <h1><%= anotacao.nome %></h1>
+        <div class="descricao-completa">
+            <%- anotacao.descricao %>
+        </div>
+        <div class="actions" style="margin-top: 30px;">
+            <a href="/<%= usuario.id %>/<%= anotacao.id %>/editar" class="btn btn-editar ">Editar</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

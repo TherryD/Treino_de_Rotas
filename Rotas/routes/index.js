@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
 
-// Rostas GET
+// --- ROTAS GET ---
 router.get('/', function(req, res, next) {
   res.render('index', {title: "Página Inicial", messages: req.flash('error')});
 });
@@ -22,6 +22,62 @@ router.get("/criar", (req, res, next) =>{
   } else {
     req.flash('error','Você precisa precisa logar para estar na próxima página.')
     res.redirect('/login')
+  }
+})
+
+router.get("/:uid/:nid/excluir", (req, res, next) =>{
+
+})
+
+router.get("/:uid/:nid/editar", async (req, res, next) =>{
+  try {
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params;
+      const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ?"
+      const [anotacoes] = await db.query(sql, [nid, uid])
+
+      if (anotacoes.length > 0) {
+        res.render('editar_anotacao', {
+          usuario: req.session.user,
+          anotacao: anotacoes[0]
+        })
+      } else {
+        return next()
+      }
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {
+    next(error)
+  }
+
+})
+
+router.get("/:uid/:nid", async (req, res, next) =>{
+  try {
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const userId = req.session.user.id
+      const notaId = req.params.nid
+      const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ? "
+      const [anotacoes] = await db.query(sql, [notaId, userId])
+
+      if (anotacoes.length > 0) {
+        const anotacao = anotacoes[0]
+        res.render('ver_anotacao', {
+          usuario: req.session.user,
+          anotacao: anotacao
+        })
+      } else {
+        return next()
+      }
+    } else {
+      req.flash('error', 'Você precisa precisa estar logado para ver está página.')
+      res.redirect('/login')
+    } 
+  } catch (error) {
+    console.error("ERRO ao buscar a anotação.", error)
+    next(error)
   }
 })
 
@@ -48,15 +104,7 @@ router.get("/:uid", async (req, res, next) =>{
   }
 })
 
-router.get("/:uid/:nid/excluir", (req, res, next) =>{
-
-})
-
-router.get("/:uid/:nid/editar", (req, res, next) =>{
-
-})
-
-// Rotas POST
+// --- ROTAS POST ---
 router.post("/login",  async (req, res, next) =>{
   const {email, senha} = req.body
 
@@ -140,16 +188,32 @@ router.post('/criar', async (req, res, next) =>{
   }
 })
 
-router.post("/:uid/:nid", (req, res, next) =>{
+router.post('/:uid/:nid/editar', async (req, res, next) =>{
+  try {
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params
+      const {nome, descricao} = req.body
+      const sql = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
+      const values = [nome, descricao, nid, uid]
 
+      await db.query(sql, values)
+      console.log(`Anotação ${nid} atualizada com sucesso`)
+
+      res.redirect(`/${uid}/${nid}`)
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {
+    next(error)
+  }
 })
-
-// Rota PUT
+// --- ROTA PUT ---
 router.put("/:uid/:nid", (req, res, next) =>{
 
 })
 
-// Rota Delete
+// --- ROTA DELETE ---
 router.delete("/:uid/:nid", (req, res, next) =>{
 
 })

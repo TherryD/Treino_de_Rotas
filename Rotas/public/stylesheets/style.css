@@ -158,3 +158,25 @@ p {
   font-weight: bold;
   font-size: 18px;
 }
+
+/*--- Estilo para Visualizar as anotações ---*/
+
+/* Remove a decoração do link que envolve o item da lista */
+.link-anotacao {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.link-anotacao .item-anotacao:hover {
+  border-color: #3498db;
+  background-color: #f0f8ff;
+}
+.conteudo-anotacao {
+  text-align: left;
+}
+.descricao-completa {
+  margin-top: 20px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  font-size: 1.1em;
+}
