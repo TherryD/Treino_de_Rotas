@@ -179,3 +179,12 @@ p {
   white-space: pre-wrap;
   font-size: 1.1em;
 }
+
+/*--- Excluir Anotações ---*/
+.bnt-excluir {
+  background-color: #ff402b;
+  color: white
+}
+.bnt-excluir:hover {
+  background-color: #a5291c;
+}

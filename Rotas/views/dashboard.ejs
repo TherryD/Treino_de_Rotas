@@ -12,7 +12,7 @@
       <h1>Bem-vindo(a), <%= usuario.nome %>!</h1>
       <p>Gerencie suas anotações abaixo.</p>
       <div class="actions">
-        <a href="/criar" class="btn btn-primary">Criar Nova Anotação</a>
+        <a href="/criar" class="btn btn-anotacao">Criar Nova Anotação</a>
         </div>
       <hr style="margin: 30px 0;">
 
@@ -20,7 +20,7 @@
       <% if (anotacoes.length > 0) { %>
         <ul class="lista-anotacoes">
           <% anotacoes.forEach(function(anotacao) { %>
-            <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="linh-anotacao">
+            <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="link-anotacao">
                 <li class="item-anotacao">
                     <span class="nome-anotacao"><%= anotacao.nome %></span>
                 </li>

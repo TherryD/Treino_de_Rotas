@@ -25,8 +25,27 @@ router.get("/criar", (req, res, next) =>{
   }
 })
 
-router.get("/:uid/:nid/excluir", (req, res, next) =>{
-
+router.get("/:uid/:nid/excluir", async (req, res, next) =>{
+  try {
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params
+      const [rows] = await db.query("SELECT * FROM anotacoes WHERE id = ? AND user_id = ? ", [nid, uid])
+      
+      if (rows.length > 0) {
+        const anotacao = rows[0]
+        res.render('excluir_anotacao', {
+          usuario: req.session.user,
+          anotacao: anotacao
+        })
+      } else { return next()
+      }
+    } else{
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.get("/:uid/:nid/editar", async (req, res, next) =>{
@@ -185,6 +204,23 @@ router.post('/criar', async (req, res, next) =>{
   } catch (error) {
     console.error("ERRO ao criar anotação:", error)
     next(error)
+  }
+})
+
+router.post('/:uid/:nid/excluir', async (req, res, next) =>{
+  try{
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params
+
+      const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id = ? AND user_id = ?"
+      await db.query(sql, [nid, uid])
+      console.log(`Anotação ${nid} enviada para a lixeira.`)
+      res.redirect(`/${uid}`)
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) { next(error)
   }
 })
 

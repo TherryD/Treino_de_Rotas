@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Exclusão</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <div class="painel-principal" style="max-width: 600px;">
+    <h1>Confirmar Exclusão</h1>
+    <p>Você tem certeza que deseja enviar a anotação abaixo para a lixeira?</p>
+    <div class="item-anotacao" style="margin-bottom: 30px;">
+      <span class="nome-anotacao"><%= anotacao.nome %></span>
+    </div>
+
+    <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir" method="POST">
+      <div class="actions">
+        <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-excluir">Sim, Excluir</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

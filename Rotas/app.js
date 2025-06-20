@@ -25,7 +25,7 @@ app.use(session({
   secret: 'Seu_segredo_Super_Secreto',
   resave: false,
   saveUninitialized: true,
-  Cookie: {secure: false}
+  cookie: {secure: false}
 }))
 app.use(flash())
 app.use(express.static(path.join(__dirname, 'public')));
