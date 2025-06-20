@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lixeira - Anotai</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <div class="painel-principal" style="max-width: 700px;">
+    <div class="link-voltar">
+      <a href="/<%= usuario.id %>">&larr; Voltar para o Painel</a>
+    </div>
+    <h1>Lixeira</h1>
+    <p>Anotações excluídas. Aqui você pode restaurá-las ou excluí-las permanentemente.</p>
+    <hr style="margin: 30px 0;">
+
+    <% if (anotacoes && anotacoes.length > 0) { %>
+      <ul class="lista-anotacoes">
+        <% anotacoes.forEach(function(anotacao) { %>
+          <li class="item-anotacao">
+            <span class="nome-anotacao"><%= anotacao.nome %></span>
+            <div class="actions" style="margin-top: 10px; justify-content: flex-end;">
+              <form action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" style="margin-right: 10px;">
+                <button type="submit" class="btn btn-secondary">Restaurar</button>
+              </form>
+              <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir-permanente" method="POST">
+                <button type="submit" class="btn btn-danger">Excluir de Vez</button>
+              </form>
+            </div>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>A lixeira está vazia.</p>
+    <% } %>
+  </div>
+</body>
+</html>

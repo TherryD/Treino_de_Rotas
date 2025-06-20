@@ -100,6 +100,24 @@ router.get("/:uid/:nid", async (req, res, next) =>{
   }
 })
 
+router.get('/:uid/lixeira', async (req, res, next) =>{
+  try{
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const userId = req.session.user.id
+      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC "
+      const [anotacoes] = await db.query(sql, [userId])
+
+      res.render('lixeira', {
+        usuario: req.session.user,
+        anotacoes: anotacoes
+      })
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
 router.get("/:uid", async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid){
