@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Principal</title>
   <link rel='stylesheet' href='/stylesheets/style.css'/>
-  <link rel='stylesheet' href='/stylesheets/style.css'/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 </head>
 <body>
@@ -14,12 +13,18 @@
       <h1>Bem-vindo(a), <%= usuario.nome %>!</h1>
       <p>Gerencie suas anotações abaixo.</p>
       <div class="actions">
-        <a href="/criar" class="btn btn-anotacao">Criar Nova Anotação</a>
+        <a href="/criar" class="btn btn-primary">Criar Nova Anotação</a>
         <a href="/<%= usuario.id %>/lixeira" class="btn btn-secondary">Lixeira</a>
         <a href="/<%= usuario.id %>/perfil" class="btn btn-secondary">Meu Perfil</a>
-        <a href="/lougout" class="btn btn-secondary">Sair</a>
+        <a href="/logout" class="btn btn-secondary">Sair</a>
       </div>
+
       <hr style="margin: 30px 0;">
+
+      <div class="group-formulario" style="margin-bottom: 30px;">
+        <label for="filtro-anotacoes">Buscar Anotações</label>
+        <input type="text" id="filtro-anotacoes" class="campo-formulario" placeholder="Digite para filtrar...">
+      </div>
 
       <h2>Suas Anotações</h2>
       <% if (anotacoes.length > 0) { %>
@@ -30,10 +35,10 @@
                 <span class="nome-anotacao"><%= anotacao.nome %></span>
               </a>
               <div class="anotacao-actions">
-                <a href="/<% usuario.id %>/<%= anotacao.id %>/editar" class="acao-anotacao" title="Editar">
-                  <i class="fas fa_pencil-alt"></i></a>
+                <a href="/<%= usuario.id %>/<%= anotacao.id %>/editar" class="acao-anotacao" title="Editar">
+                  <i class="fas fa-pencil-alt"></i></a>
                 <a href="/<%= usuario.id %>/<%= anotacao.id %>/excluir" class="acao-anotacao" title="Excluir">
-                  <i class="fas fa_pencil-alt"></i></a>
+                  <i class="fas fa-trash-alt"></i></a>
               </div>
             </li>   
         <% }); %>
@@ -48,6 +53,6 @@
       <a href="/login">Fazer Login</a>
     <% } %>
   </div>
-  <script scr="/javascripts/editor.js"></script>
+  <script src="/javascripts/filtro.js"></script>
 </body>
 </html>

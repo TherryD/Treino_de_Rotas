@@ -126,7 +126,7 @@ p {
   color: #000;
 }
 
-/*--- Estilo para os alertas de erro--- */
+/*--- Estilo para os alertas de erro --- */
 
 .alerta-erro {
   padding: 15px;
@@ -180,6 +180,7 @@ p {
   font-size: 1.1em;
   color: #34495e;
   font-size: 16px; 
+  overflow-wrap: break-word;
 }
 
 /*--- Excluir Anotações ---*/
@@ -274,7 +275,7 @@ p {
   border: 0;
 }
 
-/*--- Estilos das ações na lista do dashbord---*/
+/*--- Estilos das ações na lista do dashbord ---*/
 
 /* Transforma o item da lista em um container flexível */
 .item-anotacao {
