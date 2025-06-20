@@ -7,31 +7,23 @@
   <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-
   <div class="painel-formulario">
     <div class="voltar">
-        <a href="/<%= usuario.id %>">&larr;</a>
+      <a href="/<%= usuario.id %>">&larr;</a>
     </div>
-
     <h1>Nova Anotação</h1>
     <p>Dê um nome e descreva sua nova anotação.</p>
-    
     <form action="/criar" method="POST">
-      
       <div class="grupo-formulario">
         <label for="nome">Nome (Título da Anotação)</label>
         <input type="text" id="nome" name="nome" class="campo-formulario" required>
       </div>
-      
       <div class="grupo-formulario">
         <label for="descricao">Descrição</label>
         <textarea id="descricao" name="descricao" class="campo-formulario" rows="10"></textarea>
       </div>
-
-      <button type="submit" class="btn btn-primary btn-largo">Salvar Anotação</button>
-
+      <button type="submit" class="btn btn-salvar btn-largo">Salvar Anotação</button>
     </form>
   </div>
-
 </body>
 </html>

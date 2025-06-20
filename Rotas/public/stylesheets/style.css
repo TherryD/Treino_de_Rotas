@@ -161,7 +161,6 @@ p {
 
 /*--- Estilo para Visualizar as anotações ---*/
 
-/* Remove a decoração do link que envolve o item da lista */
 .link-anotacao {
   text-decoration: none;
   color: inherit;

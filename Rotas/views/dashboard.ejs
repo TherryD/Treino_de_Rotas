@@ -11,15 +11,12 @@
     <% if (usuario) { %>
       <h1>Bem-vindo(a), <%= usuario.nome %>!</h1>
       <p>Gerencie suas anotações abaixo.</p>
-
       <div class="actions">
         <a href="/criar" class="btn btn-primary">Criar Nova Anotação</a>
         </div>
-      
       <hr style="margin: 30px 0;">
 
       <h2>Suas Anotações</h2>
-
       <% if (anotacoes.length > 0) { %>
         <ul class="lista-anotacoes">
           <% anotacoes.forEach(function(anotacao) { %>
@@ -27,15 +24,14 @@
                 <li class="item-anotacao">
                     <span class="nome-anotacao"><%= anotacao.nome %></span>
                 </li>
-            </a>
-            
+            </a> 
         <% }); %>
         </ul>
       <% } else { %>
         <p>Você ainda não tem nenhuma anotação. Que tal criar a primeira?</p>
       <% } %>
-
     <% } else { %>
+      
       <h1>Erro</h1>
       <p>Você precisa estar logado para ver esta página.</p>
       <a href="/login">Fazer Login</a>
