@@ -78,6 +78,32 @@ router.get("/:uid/perfil/excluir", (req, res, next) =>{
   }
 })
 
+router.get('/:uid/exportar/txt', async (req, res, next) =>{
+  try{
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const userId = req.session.user.id
+      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NULL ORDER BY nome ASC"
+      const [anotacoes] = await db.query(sql, [userId])
+
+      let fileContent = `Anotações de ${req.session.user.nome}\n`
+      fileContent += `Exportao em: ${new Date().toLocaleString('pt-BR')}\n\n`
+      fileContent += "=========================================\n\n"
+
+      anotacoes.forEach(anotacao =>{
+        fileContent += `TÍTULO: ${anotacao.nome}\n`
+        fileContent += `-------------------------------\n`
+        fileContent += `${anotacao.descricao || 'Nenhuma descrição.'}\n\n`
+        fileContent += "==========================================\n\n"
+      })
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+      res.send(fileContent)
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
 router.get("/:uid/:nid/excluir", async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {

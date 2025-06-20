@@ -15,7 +15,7 @@
     </div>
     <h1>Nova Anotação</h1>
     <p>Dê um nome e descreva sua nova anotação.</p>
-    <form action="/criar" method="POST">
+    <form action="/criar" method="POST" enctype="multipart/form-data">
       <div class="grupo-formulario">
         <label for="nome">Nome (Título da Anotação)</label>
         <input type="text" id="nome" name="nome" class="campo-formulario" required>
