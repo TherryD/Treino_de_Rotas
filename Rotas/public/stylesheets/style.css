@@ -273,3 +273,38 @@ p {
   background-color: transparent;
   border: 0;
 }
+
+/*--- Estilos das ações na lista do dashbord---*/
+
+/* Transforma o item da lista em um container flexível */
+.item-anotacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+}
+
+/* O link do nome da anotação agora é flexível para ocupar o espaço */
+.link-anotacao {
+  flex-grow: 1;
+  text-decoration: none;
+  color: inherit;
+}
+.link-anotacao:hover .nome-anotacao {
+  color: #3498db;
+}
+
+/* Container para os ícones */
+.anotacao-actions {
+  display: flex;
+  gap: 15px; 
+}
+
+/* Estilo para os links dos ícones */
+.acao-anotacao {
+  color: #7f8c8d;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+.acao-anotacao:hover {
+  color: #2c3e50;
+}

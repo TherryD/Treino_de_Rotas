@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Principal</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 </head>
 <body>
   <div class="painel-principal">
@@ -23,11 +25,17 @@
       <% if (anotacoes.length > 0) { %>
         <ul class="lista-anotacoes">
           <% anotacoes.forEach(function(anotacao) { %>
-            <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="link-anotacao">
-                <li class="item-anotacao">
-                    <span class="nome-anotacao"><%= anotacao.nome %></span>
-                </li>
-            </a> 
+            <li class="item-anotacao"> 
+              <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="link-anotacao">
+                <span class="nome-anotacao"><%= anotacao.nome %></span>
+              </a>
+              <div class="anotacao-actions">
+                <a href="/<% usuario.id %>/<%= anotacao.id %>/editar" class="acao-anotacao" title="Editar">
+                  <i class="fas fa_pencil-alt"></i></a>
+                <a href="/<%= usuario.id %>/<%= anotacao.id %>/excluir" class="acao-anotacao" title="Excluir">
+                  <i class="fas fa_pencil-alt"></i></a>
+              </div>
+            </li>   
         <% }); %>
         </ul>
       <% } else { %>
@@ -40,5 +48,6 @@
       <a href="/login">Fazer Login</a>
     <% } %>
   </div>
+  <script scr="/javascripts/editor.js"></script>
 </body>
 </html>
