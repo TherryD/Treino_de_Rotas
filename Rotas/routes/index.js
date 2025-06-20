@@ -262,6 +262,39 @@ router.post('/:uid/:nid/editar', async (req, res, next) =>{
     next(error)
   }
 })
+
+router.post("/:uid/:nid/restaurar", async (req, res, next) =>{
+  try {
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params
+      const sql = "UPDATE anotacoes SET deleted_at = NULL WHERE id = ? AND user_id = ?"
+      await db.query(sql, [nid, uid]);
+
+      console.log(`Anotação ${nid} restaurada com sucesso.`)
+      res.redirect(`/${uid}/lixeira`)
+    } else {
+      req.flash('error', 'Acesso não autorizado. ')
+      res.redirect('/login')
+    }
+  } catch (error){next(error)}
+})
+
+router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
+  try{
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid, nid} = req.params
+      const sql = "DELETE FROM anotacoes WHERE id = ? AND user_id = ?"
+      await db.query(sql, [nid, uid])
+
+      console.log(`Anotação ${nid} excluída permanentemente.`)
+      res.redirect(`/${uid}/lixeira`)
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
 // --- ROTA PUT ---
 router.put("/:uid/:nid", (req, res, next) =>{
 
