@@ -26,6 +26,33 @@ router.get("/criar", (req, res, next) =>{
   }
 })
 
+router.get('/:uid/lixeira', async (req, res, next) =>{
+  try{
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const userId = req.session.user.id
+      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC "
+      const [anotacoes] = await db.query(sql, [userId])
+
+      res.render('lixeira', {
+        usuario: req.session.user,
+        anotacoes: anotacoes
+      })
+    } else {
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
+router.get('/:uid/perfil/editar', (req, res, next) =>{
+  if (req.session.user && req.session.user.id == req.params.uid) {
+    res.render('editar_perfil', {usuario: req.session.user})
+  } else{
+    req.flash('error', 'Acesso não autorizado.')
+    res.redirect('/login')
+  }
+})
+
 router.get("/:uid/:nid/excluir", async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -101,24 +128,6 @@ router.get("/:uid/:nid", async (req, res, next) =>{
     console.error("ERRO ao buscar a anotação.", error)
     next(error)
   }
-})
-
-router.get('/:uid/lixeira', async (req, res, next) =>{
-  try{
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const userId = req.session.user.id
-      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC "
-      const [anotacoes] = await db.query(sql, [userId])
-
-      res.render('lixeira', {
-        usuario: req.session.user,
-        anotacoes: anotacoes
-      })
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
-  } catch (error) {next(error)}
 })
 
 router.get("/:uid", async (req, res, next) =>{
@@ -293,6 +302,25 @@ router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
       res.redirect(`/${uid}/lixeira`)
     } else {
       req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error) {next(error)}
+})
+
+router.post('/:uid/perfil/editar', async (req, res, next) =>{
+  try {
+    if (req.session.user && req.session.user.id == req.params.uid) {
+      const {uid} = req.params
+      const {nome} = req.body
+
+      const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
+      await db.query(sql, [nome, uid])
+
+      req.session.user.nome = nome
+      console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
+      res.redirect(`/${uid}`)
+    } else {
+      req.flash('error', "Acesso não autorizado.")
       res.redirect('/login')
     }
   } catch (error) {next(error)}
