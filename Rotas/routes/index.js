@@ -26,6 +26,22 @@ router.get("/criar", (req, res, next) =>{
   }
 })
 
+router.get('/logout', (req, res, next) =>{
+  req.session.destroy(err =>{
+    if(err){return next(err)}
+    res.redirect('/')
+  })
+})
+
+router.get('/:uid/perfil', (req, res, next) =>{
+  if (req.session.user && req.session.user.id == req.params.uid) {
+    res.render('perfil', {usuario: req.session.user})
+  } else{
+    req.flash('error', 'Acesso não autorizado.')
+    res.redirect('/login')
+  }
+})
+
 router.get('/:uid/lixeira', async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid) {
