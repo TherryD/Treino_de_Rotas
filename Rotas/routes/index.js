@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
+const showdown = require('showdown');
 
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
@@ -83,6 +84,8 @@ router.get("/:uid/:nid", async (req, res, next) =>{
 
       if (anotacoes.length > 0) {
         const anotacao = anotacoes[0]
+        const converter = new showdown.Converter()
+        anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao)
         res.render('ver_anotacao', {
           usuario: req.session.user,
           anotacao: anotacao
@@ -132,7 +135,7 @@ router.get("/:uid", async (req, res, next) =>{
         anotacoes: anotacoes 
       })
     } else {
-      req.flash('error', 'Você precisa precisa logar para estar na próxima página.')
+      req.flash('error', 'Você precisa logar para estar na próxima página.')
       res.redirect('/login')
     }
   } catch (error) {

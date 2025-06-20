@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Criar Nova Anotação</title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+  <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 </head>
 <body>
   <div class="painel-formulario">
@@ -22,8 +24,9 @@
         <label for="descricao">Descrição</label>
         <textarea id="descricao" name="descricao" class="campo-formulario" rows="10"></textarea>
       </div>
-      <button type="submit" class="btn btn-salvar btn-largo">Salvar Anotação</button>
+      <button type="submit" class="btn btn-primary btn-largo">Salvar Anotação</button>
     </form>
   </div>
+  <script src="/javascripts/editor.js"></script>
 </body>
 </html>

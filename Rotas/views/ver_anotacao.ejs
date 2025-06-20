@@ -14,7 +14,7 @@
         <div class="conteudo-anotacao">
             <h1><%= anotacao.nome %></h1>
         <div class="descricao-completa">
-            <%- anotacao.descricao %>
+            <%- anotacao.descricaoHtml %>
         </div>
         <div class="actions" style="margin-top: 30px;">
             <a href="/<%= usuario.id %>/<%= anotacao.id %>/editar" class="btn btn-editar ">Editar</a>

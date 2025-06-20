@@ -8,8 +8,8 @@
 </head>
 <body>
   <div class="painel-principal" style="max-width: 700px;">
-    <div class="link-voltar">
-      <a href="/<%= usuario.id %>">&larr; Voltar para o Painel</a>
+    <div class="voltar">
+      <a href="/<%= usuario.id %>">&larr;</a>
     </div>
     <h1>Lixeira</h1>
     <p>Anotações excluídas. Aqui você pode restaurá-las ou excluí-las permanentemente.</p>
@@ -25,7 +25,7 @@
                 <button type="submit" class="btn btn-secondary">Restaurar</button>
               </form>
               <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir-permanente" method="POST">
-                <button type="submit" class="btn btn-danger">Excluir de Vez</button>
+                <button type="submit" class="btn btn-excluir">Excluir de Vez</button>
               </form>
             </div>
           </li>

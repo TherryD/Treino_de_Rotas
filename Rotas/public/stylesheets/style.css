@@ -178,6 +178,8 @@ p {
   line-height: 1.7;
   white-space: pre-wrap;
   font-size: 1.1em;
+  color: #34495e;
+  font-size: 16px; 
 }
 
 /*--- Excluir Anotações ---*/
@@ -187,4 +189,87 @@ p {
 }
 .btn-excluir:hover {
   background-color: #a5291c;
+}
+
+/* --- Estilo Com os MARKDOWN Renderizado --- */
+
+/* Ajuste geral de parágrafos dentro da nota */
+.descricao-completa p {
+  line-height: 1.7;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+/* Estilos para Títulos (h1, h2, h3) */
+.descricao-completa h1,
+.descricao-completa h2,
+.descricao-completa h3,
+.descricao-completa h4,
+.descricao-completa h5,
+.descricao-completa h6 {
+  color: #2c3e50;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  line-height: 1.25;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+.descricao-completa h1 { font-size: 1.8em; }
+.descricao-completa h2 { font-size: 1.4em; }
+.descricao-completa h3 { font-size: 1.2em; }
+
+/* Estilos para Listas (A CORREÇÃO PRINCIPAL ESTÁ AQUI) */
+.descricao-completa ul,
+.descricao-completa ol {
+  padding-left: 25px; 
+  margin-bottom: 16px;
+}
+.descricao-completa li {
+  margin-bottom: 8px;
+}
+
+/* Estilos para Links */
+.descricao-completa a {
+  color: #3498db;
+  text-decoration: none;
+}
+.descricao-completa a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para Citação (blockquote) */
+.descricao-completa blockquote {
+  padding: 10px 20px;
+  margin: 0 0 20px;
+  border-left: 4px solid #dfe2e5;
+  background-color: #f6f8fa;
+  color: #6a737d;
+}
+
+/* Estilos para Código */
+.descricao-completa code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27,31,35,0.05);
+  border-radius: 3px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.descricao-completa pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+.descricao-completa pre code {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
 }
