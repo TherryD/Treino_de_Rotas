@@ -1,4 +1,4 @@
-/*--- Estilo do index.ejs ---*/
+/*---- Estilo do index.ejs ----*/
 body {
   padding: 0;
   margin: 0;
@@ -60,7 +60,7 @@ p {
 }
 
 
-/*--- Estilo do cadastro e do login ---*/
+/*---- Estilo do cadastro e do login ----*/
 .painel-formulario {
   text-align: center;
   background-color: white;
@@ -110,7 +110,7 @@ p {
   text-decoration: underline;
 }
 
-/*--- flecha para voltar para a tela anterio ---*/
+/*---- flecha para voltar para a tela anterio ----*/
 .voltar {
   text-align: left;
   margin-bottom: 25px;
@@ -126,7 +126,7 @@ p {
   color: #000;
 }
 
-/*--- Estilo para os alertas de erro --- */
+/*---- Estilo para os alertas de erro ---- */
 
 .alerta-erro {
   padding: 15px;
@@ -139,7 +139,7 @@ p {
   text-align: center;
 }
 
-/*--- Estilos para a Lista de Anotações ---*/
+/*---- Estilos para a Lista de Anotações ----*/
 
 .lista-anotacoes {
   list-style-type: none;
@@ -159,7 +159,7 @@ p {
   font-size: 18px;
 }
 
-/*--- Estilo para Visualizar as anotações ---*/
+/*---- Estilo para Visualizar as anotações ----*/
 
 .link-anotacao {
   text-decoration: none;
@@ -183,7 +183,7 @@ p {
   background-color: #a5291c;
 }
 
-/* --- Estilo Com os MARKDOWN Renderizado --- */
+/* ---- Estilo Com os MARKDOWN Renderizado ---- */
 
 .descricao-completa {
   margin-top: 20px;
@@ -276,7 +276,7 @@ p {
   border: 0;
 }
 
-/*--- Estilos das ações na lista do dashbord ---*/
+/*---- Estilos das ações na lista do dashbord ----*/
 
 /* Transforma o item da lista em um container flexível */
 .item-anotacao {
@@ -311,7 +311,7 @@ p {
   color: #2c3e50;
 }
 
-/*--- Estilo para Menus DROPDOWN ---*/
+/*---- Estilo para Menus DROPDOWN ----*/
 
 /* Garante que o painel principal sirva de âncora para o menu de ações da página */
 .painel-principal {
@@ -325,7 +325,7 @@ p {
   right: 20px;
 }
 .page-actions-dropdown .dropdown-toggle {
-  font-size: 24px;
+  font-size: 19px;
 }
 
 /* O container principal de qualquer dropdown */
@@ -351,8 +351,8 @@ p {
 .dropdown-menu {
   display: none;
   position: absolute;
-  right: 0;
-  top: 100%;
+  right: 5;
+  top: 110%;
   background-color: white;
   min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -372,6 +372,8 @@ p {
   color: black;
   padding: 10px 15px;
   text-decoration: none;
+  display: flex;
+  align-items: center;
   display: block;
   font-size: 14px;
   white-space: nowrap;
@@ -381,7 +383,7 @@ p {
 }
 .dropdown-item i {
   margin-right: 10px;
-  width: 15px;
+  width: 20px;
   text-align: center;
 }
 

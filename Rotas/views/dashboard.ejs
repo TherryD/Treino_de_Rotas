@@ -47,8 +47,10 @@
                 <button class="dropdown-toggle" title="Ações">
                   <i class="fas fa-ellipsis-v"></i></button>
                 <div class="dropdown-menu">
-                  <a href="/<%= usuario.id %>/<%= anotacao.id %>/editar" class="dropdown-item" title="Editar"></a>
-                  <a href="/<%= usuario.id %>/<%= anotacao.id %>/excluir" class="dropdown-item" title="Excluir"></a>
+                  <a href="/<%= usuario.id %>/<%= anotacao.id %>/editar" class="dropdown-item" title="Editar">
+                    <i class="fas fa-pencil-alt"></i> Editar</a>
+                  <a href="/<%= usuario.id %>/<%= anotacao.id %>/excluir" class="dropdown-item" title="Excluir">
+                    <i class="fas fa-trash-alt"></i> Excluir</a>
                 </div>
               </div>
             </li>   
