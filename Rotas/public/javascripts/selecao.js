@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () =>{
-    const checkboxes = document.querySelectorAll('.checkbox-anotacao')
+    const checkboxes = document.querySelectorAll('.checkbox')
     const acoesContainer = document.getElementById('acoes-container')
     const btnExcluir = document.getElementById('btn-excluir-selecionadas')
     const userId = document.body.dataset.userId

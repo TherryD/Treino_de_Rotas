@@ -86,7 +86,7 @@ router.get('/:uid/exportar/txt', async (req, res, next) =>{
       const [anotacoes] = await db.query(sql, [userId])
 
       let fileContent = `Anotações de ${req.session.user.nome}\n`
-      fileContent += `Exportao em: ${new Date().toLocaleString('pt-BR')}\n\n`
+      fileContent += `Exportado em: ${new Date().toLocaleString('pt-BR')}\n\n`
       fileContent += "=========================================\n\n"
 
       anotacoes.forEach(anotacao =>{
