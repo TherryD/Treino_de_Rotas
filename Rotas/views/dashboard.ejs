@@ -36,10 +36,16 @@
       </div>
 
       <h2>Suas Anotações</h2>
+      <div class="acoes" id="acoes-container" style="display: none; margin-bottom: 15px;">
+        <button id="btn-excluir-selecionadas" class="btn btn-excluir">Excluir Selecionadas</button>
+      </div>
       <% if (anotacoes.length > 0) { %>
         <ul class="lista-anotacoes">
           <% anotacoes.forEach(function(anotacao) { %>
             <li class="item-anotacao"> 
+              <div class="selecao-anotacao">
+                <input type="checkbox" class="checkbox" data-note-id="<%= anotacao.id %>">
+              </div>
               <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="link-anotacao">
                 <span class="nome-anotacao"><%= anotacao.nome %></span>
                 <div class="tags-container">
@@ -74,5 +80,6 @@
   </div>
   <script src="/javascripts/filtro.js"></script>
   <script src="/javascripts/dropdown.js"></script>
+  <script src="/javascripts/selecao.js"></script>
 </body>
 </html>

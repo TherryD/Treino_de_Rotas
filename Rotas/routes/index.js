@@ -377,6 +377,25 @@ router.post('/:uid/perfil/excluir', async (req, res, next) =>{
   } catch(error){next(error)}
 })
 
+router.post('/:uid/anotacoes/excluir-todos', async (req, res, next) =>{
+  try{
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const {uid} = req.params
+      const {noteIds} = req.body
+
+      if(!noteIds || !Array.isArray(noteIds) || noteIds.length === 0 ) {
+        return res.status(400).json({success: false, message: 'Nenhum ID de anotação fornecido.'})
+      }
+      const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id IN (?) AND user_id = ?"
+      const [result] = await db.query(sql, [noteIds, uid])
+      console.log(`${result.affectedRows} anotações enviadas para a lixeira.`)
+      res.json({success: true, message: 'Anotações excluídas com sucesso.'})
+    } else {
+      res.status(403).json({success: false, message: 'Acesso não autorizado.'})
+    }
+  } catch (error){next(error)}
+})
+
 router.post('/:uid/:nid/excluir', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {

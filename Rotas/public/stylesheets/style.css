@@ -411,3 +411,9 @@ p {
   margin-right: 5px;
   margin-bottom: 5px;
 }
+
+/*---- Estilo para CHECKBOX ----*/
+
+.selecao-anotacao{
+  padding-right: 15px;
+}
