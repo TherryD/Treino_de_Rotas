@@ -398,19 +398,48 @@ router.post('/:uid/:nid/editar', async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
       const {uid, nid} = req.params
-      const {nome, descricao} = req.body
+      const {nome, descricao, etiquetas: tagsString} = req.body
       const sql = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
       const values = [nome, descricao, nid, uid]
+      const connection = await db.getConnection()
 
-      await db.query(sql, values)
-      console.log(`Anotação ${nid} atualizada com sucesso`)
+      try{
+        await connection.beginTransaction()
+        const sqlUpdateNota = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
+        await connection.query(sqlUpdateNota, [nome, descricao, nid, uid])
+        await connection.query("DELETE FROM anotacao_etiqueta WHERE note_id = ?", [nid])
+      
+        if (tagsString && tagsString.trim() !== '') {
+          const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
 
-      res.redirect(`/${uid}/${nid}`)
+          for(const tagName of tagNames) {
+            let [rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ?", [tagName, uid])
+            let tagId
+
+            if(rows.length > 0) {
+              tagId = rows[0].id
+            } else {
+              const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, uid])
+              tagId = resultTag.insertId
+            }
+
+            await connection.query("INSERT INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [nid, tagId])
+          }
+        }
+
+        await connection.commit()
+        console.log(`Anotação ${nid} e suas etiquetas foram atualizadas com sucesso.`)
+        res.redirect(`/${uid}/${nid}`)
+      } catch (error) {
+        await connection.rollback()
+        throw error
+      } finally {connection.release()}
     } else {
       req.flash('error', 'Acesso não autorizado.')
       res.redirect('/login')
     }
   } catch (error) {
+    console.error("ERRO ao atualizar anotação com tags:", error)
     next(error)
   }
 })
