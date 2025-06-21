@@ -173,15 +173,6 @@ p {
 .conteudo-anotacao {
   text-align: left;
 }
-.descricao-completa {
-  margin-top: 20px;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  font-size: 1.1em;
-  color: #34495e;
-  font-size: 16px; 
-  overflow-wrap: break-word;
-}
 
 /*--- Excluir Anotações ---*/
 .btn-excluir {
@@ -193,6 +184,16 @@ p {
 }
 
 /* --- Estilo Com os MARKDOWN Renderizado --- */
+
+.descricao-completa {
+  margin-top: 20px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  font-size: 1.1em;
+  color: #34495e;
+  font-size: 16px; 
+  overflow-wrap: break-word;
+}
 
 /* Ajuste geral de parágrafos dentro da nota */
 .descricao-completa p {
