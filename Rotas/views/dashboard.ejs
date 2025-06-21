@@ -42,6 +42,13 @@
             <li class="item-anotacao"> 
               <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="link-anotacao">
                 <span class="nome-anotacao"><%= anotacao.nome %></span>
+                <div class="tags-container">
+                  <% if (anotacao.tags) { %>
+                    <% anotacao.tags.split(',').forEach(function(tag) { %>
+                      <span class="tag-badge"><%= tag %></span>
+                    <% }) %>
+                  <% } %>
+                </div>
               </a>
               <div class="dropdown">
                 <button class="dropdown-toggle" title="Ações">

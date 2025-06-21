@@ -23,6 +23,10 @@
         <label for="descricao">Descrição</label>
         <textarea id="descricao" name="descricao" class="campo-formulario" rows="10"><%= anotacao.descricao %></textarea>
       </div>
+      <div class="grupo-formulario">
+        <label for="etiquetas">Etiquetas</label>
+        <input type="text" id="etiquetas" name="etiquetas" class="campo-formulario" value="<%= typeof anotacao !== 'undefined' ? anotacao.tags : '' %>">
+      </div>
       <button type="submit" class="btn btn-primary btn-largo">Salvar Alterações</button>
     </form>
   </div>

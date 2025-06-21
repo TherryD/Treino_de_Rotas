@@ -131,7 +131,21 @@ router.get("/:uid/:nid/editar", async (req, res, next) =>{
   try {
     if(req.session.user && req.session.user.id == req.params.uid) {
       const {uid, nid} = req.params;
-      const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ?"
+      const sql = `
+        SELECT
+          anotacoes.*,
+          GROUP_CONCAT(etiquetas.nome) AS tags
+        FROM
+          anotacoes
+        LEFT JOIN
+          anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+        LEFT JOIN 
+          etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+        WHERE
+          anotacoes.id = ? AND anotacoes.user_id = ?
+        GROUP BY
+          anotacoes.id
+      `
       const [anotacoes] = await db.query(sql, [nid, uid])
 
       if (anotacoes.length > 0) {
@@ -185,8 +199,23 @@ router.get("/:uid", async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid){
       const userId = req.session.user.id
-
-      const sql = "SELECT * FROM anotacoes WHERE user_id  = ? AND deleted_at IS NULL ORDER BY updated_at DESC"
+      const sql = `
+        SELECT 
+          anotacoes.*, 
+          GROUP_CONCAT(etiquetas.nome) AS tags
+        FROM 
+          anotacoes
+        LEFT JOIN
+          anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+        LEFT JOIN
+          etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+        WHERE
+          anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
+        GROUP BY
+          anotacoes.id
+        ORDER BY
+          anotacoes.updated_at DESC
+        `          
       const [anotacoes] = await db.query(sql, [userId])
 
       console.log(`Encontradas ${anotacoes.length} anotações para o usuário ${userId}.`)
@@ -271,21 +300,41 @@ router.post('/criar', async (req, res, next) =>{
     req.flash('error', 'Você precisa precisa estar logado para criar uma anotação.')
     return res.redirect('/login')
   }
+  const {nome, descricao, etiquetas: tagsString} = req.body
+  const userId = req.session.user.id
+  const connection = await db.getConnection()
 
-  try{
-    const {nome, descricao} = req.body
-    const userId = req.session.user.id
-    const sql = "INSERT INTO anotacoes (nome, descricao, user_id) VALUES (?, ?, ?)"
-    const values = [nome, descricao, userId]
+  try {
+    await connection.beginTransaction()
+    const sqlNota = "INSERT INTO anotacoes (nome, descricao, user_id) VALUES (?, ?, ?)"
+    const [resultadoNota] = await connection.query(sqlNota, [nome, descricao, userId])
+    const notaId = resultadoNota.insertId
 
-    await db.query(sql, values)
+    if (tagsString) {
+      const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
+      for (const tagName of tagNames) {
+        let [rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ?", [tagName, userId])
+        let tagId
 
-    console.log(`Nova anotação "${nome}" criada para o usuário ${userId}.`)
+        if (rows.length > 0) {
+          tagId = rows[0].id 
+        } else {
+          const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, userId])
+          tagId = resultTag.insertId
+        }
+        await connection.query("INSERT IGNORE INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [notaId, tagId] )
+      }
+    }
+    await connection.commit()
+    console.log(`Nova anotação "${nome}" criada com sucesso para o usuário ${userId}.`)
     res.redirect(`/${userId}`)
-  } catch (error) {
-    console.error("ERRO ao criar anotação:", error)
+
+  } catch(error) {
+    await connection.rollback()
+    console.error("ERRO ao criar anotação com tags:", error)
     next(error)
-  }
+    
+  } finally{connection.release()}
 })
 
 router.post('/:uid/perfil/editar', async (req, res, next) =>{

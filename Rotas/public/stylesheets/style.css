@@ -394,3 +394,20 @@ p {
   overflow: hidden;
   background-color: #e9ecef;
 }
+
+/*---- Etilos para TAGS ----*/
+
+.tags-container {
+  margin-top: 8px;
+}
+.tag-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #7f8c8d;
+  border-radius: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}

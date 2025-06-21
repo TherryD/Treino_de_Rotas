@@ -15,7 +15,7 @@
     </div>
     <h1>Nova Anotação</h1>
     <p>Dê um nome e descreva sua nova anotação.</p>
-    <form action="/criar" method="POST" enctype="multipart/form-data">
+    <form action="/criar" method="POST">
       <div class="grupo-formulario">
         <label for="nome">Nome (Título da Anotação)</label>
         <input type="text" id="nome" name="nome" class="campo-formulario" required>
@@ -23,6 +23,10 @@
       <div class="grupo-formulario">
         <label for="descricao">Descrição</label>
         <textarea id="descricao" name="descricao" class="campo-formulario" rows="10"></textarea>
+      </div>
+      <div class="grupo-formulario">
+        <label for="etiquetas">Etiquetas</label>
+        <input type="text" id="etiquetas" name="etiquetas" class="campo-formulario" value="<%= typeof anotacao !== 'undefined' ? anotacao.tags : '' %>">
       </div>
       <button type="submit" class="btn btn-primary btn-largo">Salvar Anotação</button>
     </form>
