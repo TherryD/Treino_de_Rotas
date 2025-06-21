@@ -310,3 +310,85 @@ p {
 .acao-anotacao:hover {
   color: #2c3e50;
 }
+
+/*--- Estilo para Menus DROPDOWN ---*/
+
+/* Garante que o painel principal sirva de âncora para o menu de ações da página */
+.painel-principal {
+  position: relative;
+}
+
+/* Posiciona o menu de ações da página no canto superior direito */
+.page-actions-dropdown {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.page-actions-dropdown .dropdown-toggle {
+  font-size: 24px;
+}
+
+/* O container principal de qualquer dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* O botão que abre o menu (engrenagem ou 3 pontinhos) */
+.dropdown-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7f8c8d;
+  font-size: 16px;
+  padding: 5px;
+}
+.dropdown-toggle:hover {
+  color: #2c3e50;
+}
+
+/* O menu que fica escondido */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  z-index: 10;
+  padding: 5px 0;
+  border: 1px solid #eee;
+}
+
+/* Classe adicionada via JavaScript para mostrar o menu */
+.dropdown-menu.active {
+  display: block;
+}
+
+/* Os links dentro do menu */
+.dropdown-item {
+  color: black;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+.dropdown-item i {
+  margin-right: 10px;
+  width: 15px;
+  text-align: center;
+}
+
+/* Linha divisória dentro do menu */
+.dropdown-divider {
+  height: 1px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  background-color: #e9ecef;
+}
