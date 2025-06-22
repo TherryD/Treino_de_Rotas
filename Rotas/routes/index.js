@@ -494,14 +494,5 @@ router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
     }
   } catch (error) {next(error)}
 })
-// --- ROTA PUT ---
-router.put("/:uid/:nid", (req, res, next) =>{
-
-})
-
-// --- ROTA DELETE ---
-router.delete("/:uid/:nid", (req, res, next) =>{
-
-})
 
 module.exports = router;
