@@ -351,7 +351,7 @@ p {
 .dropdown-menu {
   display: none;
   position: absolute;
-  right: 5;
+  right: 5px;
   top: 110%;
   background-color: white;
   min-width: 200px;
@@ -374,7 +374,6 @@ p {
   text-decoration: none;
   display: flex;
   align-items: center;
-  display: block;
   font-size: 14px;
   white-space: nowrap;
 }
