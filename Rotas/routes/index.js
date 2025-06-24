@@ -136,11 +136,13 @@ router.get('/:uid/exportar/pdf', async (req, res, next) =>{
       res.setHeader('Content-Disposition', 'attachment; filename=anotacoes.pdf')
       
       doc.pipe(res)
-      doc.fontSize(24).font('Helvetica-bold').text('Minhas Anotações', {align: 'center'})
+      doc.fontSize(24).font('Helvetica-Bold').text('Minhas Anotações', {align: 'center'})
       doc.moveDown(2)
 
       anotacoes.forEach(anotacao =>{
-        doc.fontSize(18).font('Helvetica-bold').text(anotacao.nome)
+        const nome = String(anotacao.nome || '')
+        const descricao = String(anotacao.descricao || '')
+        doc.fontSize(18).font('Helvetica-Bold').text(anotacao.nome)
         doc.moveDown(0.5)
 
         if (anotacao.tags) {
@@ -151,13 +153,16 @@ router.get('/:uid/exportar/pdf', async (req, res, next) =>{
         doc.fontSize(12).font('Helvetica').fillColor('black').text(anotacao.descricao || '')
         doc.moveDown(1)
         doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke()
+        doc.moveDown(1)
       })
       doc.end()
     } else{
       req.flash('error', 'Acesso não autorizado.')
       res.redirect('/login')
     }
-  } catch (error){next(error)}
+  } catch (error){
+    console.error("ERRO ao gerar PDF:", error)
+    next(error)}
 })
 
 //rota GET para excluir uma anotação (/:uid/:nid/excluir)
