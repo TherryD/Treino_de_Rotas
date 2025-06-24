@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const showdown = require('showdown');
 const PDFDocument = require('pdfkit');
+const removeMd = require('remove-markdown')
 
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
@@ -139,9 +140,9 @@ router.get('/:uid/exportar/pdf', async (req, res, next) =>{
       doc.fontSize(24).font('Helvetica-Bold').text('Minhas Anotações', {align: 'center'})
       doc.moveDown(2)
 
+      const converter = new showdown.Converter();
+
       anotacoes.forEach(anotacao =>{
-        const nome = String(anotacao.nome || '')
-        const descricao = String(anotacao.descricao || '')
         doc.fontSize(18).font('Helvetica-Bold').text(anotacao.nome)
         doc.moveDown(0.5)
 
@@ -149,8 +150,13 @@ router.get('/:uid/exportar/pdf', async (req, res, next) =>{
           doc.fontSize(10).font('Helvetica').fillColor('grey').text(`Etiquetas: ${anotacao.tags}`)
           doc.moveDown(0.5)
         }
+        
+        doc.fillColor('black')
 
-        doc.fontSize(12).font('Helvetica').fillColor('black').text(anotacao.descricao || '')
+        const descricaoHtml = converter.makeHtml(anotacao.descricao || '')
+        const descricaoLimpa = descricaoHtml.replace(/<[^>]*>/g, '')
+        
+        doc.fontSize(12).font('Helvetica').text(descricaoLimpa)
         doc.moveDown(1)
         doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke()
         doc.moveDown(1)
@@ -241,7 +247,7 @@ router.get("/:uid/:nid", async (req, res, next) =>{
       if (anotacoes.length > 0) {
         const anotacao = anotacoes[0]
         const converter = new showdown.Converter()
-        anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao)
+        anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao || '')
         res.render('ver_anotacao', {
           usuario: req.session.user,
           anotacao: anotacao
