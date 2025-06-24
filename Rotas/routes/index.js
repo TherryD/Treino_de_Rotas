@@ -3,20 +3,24 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
 const showdown = require('showdown');
+const PDFDocument = require('pdfkit');
 
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
   res.render('index', {title: "Página Inicial", messages: req.flash('error')});
 });
 
+// rota GET para o login
 router.get("/login", (req, res, next) =>{
   res.render('login', {title: 'Login', messages: req.flash('error')})
 })
 
+//rota GET para o cadastro
 router.get("/cadastro", (req, res, next) =>{
   res.render('cadastro', {title: 'Pagina de cadastro', messages:req.flash('error')})
 })
 
+//rota GET para o criar anotação
 router.get("/criar", (req, res, next) =>{
   if(req.session.user) {
     res.render('anotacao', {usuario: req.session.user})
@@ -26,6 +30,7 @@ router.get("/criar", (req, res, next) =>{
   }
 })
 
+//rota GET para o logout serve para voltar para a rota '/'
 router.get('/logout', (req, res, next) =>{
   req.session.destroy(err =>{
     if(err){return next(err)}
@@ -33,6 +38,7 @@ router.get('/logout', (req, res, next) =>{
   })
 })
 
+//rota GET para o perfil de um usuario (/:uid/perfil)
 router.get('/:uid/perfil', (req, res, next) =>{
   if (req.session.user && req.session.user.id == req.params.uid) {
     res.render('perfil', {usuario: req.session.user})
@@ -42,6 +48,7 @@ router.get('/:uid/perfil', (req, res, next) =>{
   }
 })
 
+//rota GET para a lixeira (/:uid/lixeira)
 router.get('/:uid/lixeira', async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -60,6 +67,7 @@ router.get('/:uid/lixeira', async (req, res, next) =>{
   } catch (error) {next(error)}
 })
 
+//rota GET para editar um perfil (/:uid/perfil/editar)
 router.get('/:uid/perfil/editar', (req, res, next) =>{
   if (req.session.user && req.session.user.id == req.params.uid) {
     res.render('editar_perfil', {usuario: req.session.user})
@@ -69,6 +77,7 @@ router.get('/:uid/perfil/editar', (req, res, next) =>{
   }
 })
 
+//rota GET para excluir um perfil (/:uid/perfil/excluir)
 router.get("/:uid/perfil/excluir", (req, res, next) =>{
   if(req.session.user && req.session.user.id == req.params.uid) {
     res.render('excluir_perfil', {usuario: req.session.user})
@@ -78,6 +87,7 @@ router.get("/:uid/perfil/excluir", (req, res, next) =>{
   }
 })
 
+//rota GET para exportar em txt (/:uid/exportar/txt)
 router.get('/:uid/exportar/txt', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -104,6 +114,53 @@ router.get('/:uid/exportar/txt', async (req, res, next) =>{
   } catch (error) {next(error)}
 })
 
+//rota GET para exportar em pdf (/:uid/exportar/pdf)
+router.get('/:uid/exportar/pdf', async (req, res, next) =>{
+  try{
+    if(req.session.user && req.session.user.id == req.params.uid) {
+      const userId = req.session.user.id
+      const sql =`
+        SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome SEPARATOR ', ') AS tags
+        FROM anotacoes
+        LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+        LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+        WHERE anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
+        GROUP BY anotacoes.id 
+        ORDER BY anotacoes.updated_at DESC
+      `
+
+      const[anotacoes] = await db.query(sql, [userId])
+      const doc = new PDFDocument({margin: 50})
+
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader('Content-Disposition', 'attachment; filename=anotacoes.pdf')
+      
+      doc.pipe(res)
+      doc.fontSize(24).font('Helvetica-bold').text('Minhas Anotações', {align: 'center'})
+      doc.moveDown(2)
+
+      anotacoes.forEach(anotacao =>{
+        doc.fontSize(18).font('Helvetica-bold').text(anotacao.nome)
+        doc.moveDown(0.5)
+
+        if (anotacao.tags) {
+          doc.fontSize(10).font('Helvetica').fillColor('grey').text(`Etiquetas: ${anotacao.tags}`)
+          doc.moveDown(0.5)
+        }
+
+        doc.fontSize(12).font('Helvetica').fillColor('black').text(anotacao.descricao || '')
+        doc.moveDown(1)
+        doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke()
+      })
+      doc.end()
+    } else{
+      req.flash('error', 'Acesso não autorizado.')
+      res.redirect('/login')
+    }
+  } catch (error){next(error)}
+})
+
+//rota GET para excluir uma anotação (/:uid/:nid/excluir)
 router.get("/:uid/:nid/excluir", async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -127,6 +184,7 @@ router.get("/:uid/:nid/excluir", async (req, res, next) =>{
   }
 })
 
+//rota GET para editar uma anotação (/:uid/:nid/editar)
 router.get("/:uid/:nid/editar", async (req, res, next) =>{
   try {
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -166,6 +224,7 @@ router.get("/:uid/:nid/editar", async (req, res, next) =>{
 
 })
 
+//rota GET
 router.get("/:uid/:nid", async (req, res, next) =>{
   try {
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -195,6 +254,7 @@ router.get("/:uid/:nid", async (req, res, next) =>{
   }
 })
 
+//rota GET 
 router.get("/:uid", async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid){
@@ -234,6 +294,7 @@ router.get("/:uid", async (req, res, next) =>{
 })
 
 // --- ROTAS POST ---
+//rota POST para o login
 router.post("/login",  async (req, res, next) =>{
   const {email, senha} = req.body
 
@@ -267,7 +328,8 @@ router.post("/login",  async (req, res, next) =>{
   }
 
 })
-  
+
+//rota POST para o cadastro
 router.post("/cadastro", async(req, res, next) =>{
   const {nome, email, senha} = req.body
 
@@ -295,6 +357,7 @@ router.post("/cadastro", async(req, res, next) =>{
   }
 })
 
+//rota POST para criar anotação
 router.post('/criar', async (req, res, next) =>{
   if (!req.session.user) {
     req.flash('error', 'Você precisa precisa estar logado para criar uma anotação.')
@@ -337,6 +400,7 @@ router.post('/criar', async (req, res, next) =>{
   } finally{connection.release()}
 })
 
+//rota POST para editar o perfil (/:uid/perfil/editar)
 router.post('/:uid/perfil/editar', async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -356,6 +420,7 @@ router.post('/:uid/perfil/editar', async (req, res, next) =>{
   } catch (error) {next(error)}
 })
 
+//rota POST para editar um perfil (/:uid/perfil/excluir)
 router.post('/:uid/perfil/excluir', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -377,6 +442,7 @@ router.post('/:uid/perfil/excluir', async (req, res, next) =>{
   } catch(error){next(error)}
 })
 
+//rota POST para excluir todas as anotações (/:uid/anotacoes/excluir-todos)
 router.post('/:uid/anotacoes/excluir-todos', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -396,6 +462,7 @@ router.post('/:uid/anotacoes/excluir-todos', async (req, res, next) =>{
   } catch (error){next(error)}
 })
 
+//rota POST para excluir uma anotação (/:uid/:nid/excluir)
 router.post('/:uid/:nid/excluir', async (req, res, next) =>{
   try{
     if(req.session.user && req.session.user.id == req.params.uid) {
@@ -413,6 +480,7 @@ router.post('/:uid/:nid/excluir', async (req, res, next) =>{
   }
 })
 
+//rota POST para editar uma anotação (/:uid/:nid/editar)
 router.post('/:uid/:nid/editar', async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -463,6 +531,7 @@ router.post('/:uid/:nid/editar', async (req, res, next) =>{
   }
 })
 
+//rota POST para restaurar uma anotação (/:uid/:nid/restaurar)
 router.post("/:uid/:nid/restaurar", async (req, res, next) =>{
   try {
     if (req.session.user && req.session.user.id == req.params.uid) {
@@ -479,6 +548,7 @@ router.post("/:uid/:nid/restaurar", async (req, res, next) =>{
   } catch (error){next(error)}
 })
 
+//rota POST para excluir permanente uma anotação (/:uid/:nid/excluir-permanente)
 router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
   try{
     if (req.session.user && req.session.user.id == req.params.uid) {
