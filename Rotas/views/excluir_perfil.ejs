@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confirmar Exclusão de Conta</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
 </head>
 <body>
-  <div class="painel-principal" style="max-width: 600px;">
+  <div class="painel-principal painel-principal--pequeno">
     <h1>Confirmar Exclusão de Conta</h1>
     <p class="alerta-erro">
       <strong>Atenção!</strong> Esta ação é irreversível. Ao confirmar, sua conta e <strong>TODAS</strong> as suas anotações serão permanentemente apagadas.
@@ -15,7 +15,7 @@
     <p>Você tem certeza que deseja excluir sua conta, <strong><%= usuario.nome %></strong>?</p>
 
     <form action="/<%= usuario.id %>/perfil/excluir" method="POST">
-      <div class="actions" style="margin-top: 30px;">
+      <div class="actions acations-exclusao">
         <a href="/<%= usuario.id %>/perfil" class="btn btn-secondary">Não, quero voltar</a>
         <button type="submit" class="btn btn-danger">Sim, excluir minha conta permanentemente</button>
       </div>

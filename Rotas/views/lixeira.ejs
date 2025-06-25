@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lixeira - Anotai</title>
+  <title>Lixeira</title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-  <div class="painel-principal" style="max-width: 700px;">
+  <div class="painel-principal painel-principal--medio">
     <div class="voltar">
       <a href="/<%= usuario.id %>">&larr;</a>
     </div>
     <h1>Lixeira</h1>
     <p>Anotações excluídas. Aqui você pode restaurá-las ou excluí-las permanentemente.</p>
-    <hr style="margin: 30px 0;">
+    <hr class="separador-grande">
 
     <% if (anotacoes && anotacoes.length > 0) { %>
       <ul class="lista-anotacoes">
         <% anotacoes.forEach(function(anotacao) { %>
           <li class="item-anotacao">
             <span class="nome-anotacao"><%= anotacao.nome %></span>
-            <div class="actions" style="margin-top: 10px; justify-content: flex-end;">
-              <form action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" style="margin-right: 10px;">
+            <div class="actions acations-lixeira" 
+              <form class="form-lixeira-restaurar" action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" >
                 <button type="submit" class="btn btn-secondary">Restaurar</button>
               </form>
               <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir-permanente" method="POST">

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 </head>
 <body data-user-id="<%= usuario.id %>">
-  <div class="painel-principal">
+  <div class="painel-principal painel-principal--medio">
     <% if (usuario) { %>
       <div class="page-actions-dropdown">
         <div class="dropdown">
@@ -29,15 +29,15 @@
 
       <h1>Bem-vindo(a), <%= usuario.nome %>!</h1>
       <p>Gerencie suas anotações abaixo.</p>
-      <hr style="margin: 30px 0;">
+      <hr class="separador-grande">
 
-      <div class="grupo-formulario" style="margin-bottom: 30px;">
+      <div class="grupo-formulario grupo-filtro">
         <label for="filtro-anotacoes">Buscar Anotações</label>
         <input type="text" id="filtro-anotacoes" class="campo-formulario" placeholder="Digite para filtrar...">
       </div>
 
       <h2>Suas Anotações</h2>
-      <div class="acoes" id="acoes-container" style="display: none; margin-bottom: 15px;">
+      <div class="acoes container-acoes-selecao" id="acoes-container">
         <button id="btn-excluir-selecionadas" class="btn btn-excluir">Excluir Selecionadas</button>
       </div>
       <% if (anotacoes.length > 0) { %>

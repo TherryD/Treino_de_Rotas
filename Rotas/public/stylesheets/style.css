@@ -1,4 +1,4 @@
-/*---- Estilo do index.ejs ----*/
+/* === ESTILOS GLOBAIS === */
 body {
   padding: 0;
   margin: 0;
@@ -9,28 +9,56 @@ body {
   align-items: center;
   min-height: 100vh;
 }
+
+h1 {
+  color: #1d2630;
+  margin-bottom: 5px;
+}
+
+p {
+  color: #637272;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+hr.separador-grande {
+  margin: 30px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+/* === LAYOUT E PAINÉIS === */
 .painel-principal {
   text-align: center;
   background-color: white;
   padding: 20px 50px;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 500px; /* Padrão */
+  position: relative;
+}
+
+.painel-principal--pequeno {
+  max-width: 600px;
+}
+
+.painel-principal--medio {
+  max-width: 700px;
+}
+
+.painel-formulario {
+  text-align: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
   max-width: 500px;
 }
-h1 {
-  color: #1d2630;
-  margin-bottom: 5px;
-}
-p {
-  color: #637272;
-  line-height: 1.6;
-  margin-bottom: 30px;
-}
-.actions {
-  display: flex;
-  gap: 15px; 
-  justify-content: center;
-}
+
+/* === COMPONENTES === */
+
+/* --- Botões --- */
 .btn {
   display: inline-block;
   padding: 12px 25px;
@@ -38,6 +66,8 @@ p {
   border-radius: 5px;
   font-weight: bold;
   font-size: 15px;
+  border: none;
+  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .btn:hover {
@@ -58,18 +88,19 @@ p {
 .btn-cadastro:hover {
   background-color: #b9bbbb;
 }
-
-
-/*---- Estilo do cadastro e do login ----*/
-.painel-formulario {
-  text-align: center;
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
+.btn-excluir {
+  background-color: #ff402b;
+  color: white;
 }
+.btn-excluir:hover {
+  background-color: #a5291c;
+}
+.btn-largo {
+  width: 100%;
+  padding: 15px;
+}
+
+/* --- Formulários --- */
 .grupo-formulario {
   margin-bottom: 20px;
   text-align: left;
@@ -93,10 +124,6 @@ p {
   border-color: #3498db;
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
-.btn-largo {
-  width: 100%;
-  padding: 15px;
-}
 .rodape-formulario {
   margin-top: 25px;
   font-size: 14px;
@@ -110,37 +137,18 @@ p {
   text-decoration: underline;
 }
 
-/*---- flecha para voltar para a tela anterio ----*/
-.voltar {
-  text-align: left;
-  margin-bottom: 25px;
-}
-.voltar a {
-  text-decoration: none;
-  color: #555;
-  font-weight: bold;
-  font-size: 25px;
-}
-.voltar a:hover {
-  text-decoration: underline;
-  color: #000;
-}
-
-/*---- Estilo para os alertas de erro ---- */
-
+/* --- Alertas --- */
 .alerta-erro {
   padding: 15px;
   margin-bottom: 20px;
-  border: 1px solid transparent;
+  border: 1px solid #ebccd1;
   border-radius: 4px;
   color: #a94442;
   background-color: #f2dede;
-  border-color: #ebccd1;
   text-align: center;
 }
 
-/*---- Estilos para a Lista de Anotações ----*/
-
+/* --- Listas --- */
 .lista-anotacoes {
   list-style-type: none;
   padding: 0;
@@ -153,61 +161,112 @@ p {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+}
+.link-anotacao {
+  flex-grow: 1;
+  text-decoration: none;
+  color: inherit;
+}
+.link-anotacao:hover .nome-anotacao {
+  color: #3498db;
 }
 .nome-anotacao {
   font-weight: bold;
   font-size: 18px;
 }
 
-/*---- Estilo para Visualizar as anotações ----*/
-
-.link-anotacao {
-  text-decoration: none;
-  color: inherit;
+/* --- Dropdown --- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7f8c8d;
+  font-size: 16px;
+  padding: 5px;
+}
+.dropdown-toggle:hover {
+  color: #2c3e50;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 5px;
+  top: 110%;
+  background-color: white;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  z-index: 10;
+  padding: 5px 0;
+  border: 1px solid #eee;
+}
+.dropdown-menu.active {
   display: block;
 }
-.link-anotacao .item-anotacao:hover {
-  border-color: #3498db;
-  background-color: #f0f8ff;
+.dropdown-item {
+  color: black;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  white-space: nowrap;
 }
-.conteudo-anotacao {
-  text-align: left;
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+.dropdown-item i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+.dropdown-divider {
+  height: 1px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  background-color: #e9ecef;
 }
 
-/*--- Excluir Anotações ---*/
-.btn-excluir {
-  background-color: #ff402b;
-  color: white
+/* --- Tags --- */
+.tags-container {
+  margin-top: 8px;
 }
-.btn-excluir:hover {
-  background-color: #a5291c;
+.tag-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #7f8c8d;
+  border-radius: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
-/* ---- Estilo Com os MARKDOWN Renderizado ---- */
-
+/* --- Conteúdo Renderizado (Markdown) --- */
 .descricao-completa {
   margin-top: 20px;
   line-height: 1.7;
   white-space: pre-wrap;
-  font-size: 1.1em;
+  font-size: 16px;
   color: #34495e;
-  font-size: 16px; 
   overflow-wrap: break-word;
+  text-align: left;
 }
-
-/* Ajuste geral de parágrafos dentro da nota */
 .descricao-completa p {
   line-height: 1.7;
   margin-top: 0;
   margin-bottom: 16px;
 }
-/* Estilos para Títulos (h1, h2, h3) */
-.descricao-completa h1,
-.descricao-completa h2,
-.descricao-completa h3,
-.descricao-completa h4,
-.descricao-completa h5,
-.descricao-completa h6 {
+.descricao-completa h1, .descricao-completa h2, .descricao-completa h3,
+.descricao-completa h4, .descricao-completa h5, .descricao-completa h6 {
   color: #2c3e50;
   margin-top: 24px;
   margin-bottom: 16px;
@@ -218,18 +277,13 @@ p {
 .descricao-completa h1 { font-size: 1.8em; }
 .descricao-completa h2 { font-size: 1.4em; }
 .descricao-completa h3 { font-size: 1.2em; }
-
-/* Estilos para Listas (A CORREÇÃO PRINCIPAL ESTÁ AQUI) */
-.descricao-completa ul,
-.descricao-completa ol {
+.descricao-completa ul, .descricao-completa ol {
   padding-left: 25px; 
   margin-bottom: 16px;
 }
 .descricao-completa li {
   margin-bottom: 8px;
 }
-
-/* Estilos para Links */
 .descricao-completa a {
   color: #3498db;
   text-decoration: none;
@@ -237,8 +291,6 @@ p {
 .descricao-completa a:hover {
   text-decoration: underline;
 }
-
-/* Estilos para Citação (blockquote) */
 .descricao-completa blockquote {
   padding: 10px 20px;
   margin: 0 0 20px;
@@ -246,8 +298,6 @@ p {
   background-color: #f6f8fa;
   color: #6a737d;
 }
-
-/* Estilos para Código */
 .descricao-completa code {
   padding: 0.2em 0.4em;
   margin: 0;
@@ -276,49 +326,39 @@ p {
   border: 0;
 }
 
-/*---- Estilos das ações na lista do dashbord ----*/
 
-/* Transforma o item da lista em um container flexível */
-.item-anotacao {
-  display: flex;
-  justify-content: space-between;
-  align-items: center; 
-}
+/* === SEÇÕES E PÁGINAS ESPECÍFICAS === */
 
-/* O link do nome da anotação agora é flexível para ocupar o espaço */
-.link-anotacao {
-  flex-grow: 1;
-  text-decoration: none;
-  color: inherit;
-}
-.link-anotacao:hover .nome-anotacao {
-  color: #3498db;
-}
-
-/* Container para os ícones */
-.anotacao-actions {
+/* --- Página Principal (index) --- */
+.actions {
   display: flex;
   gap: 15px; 
+  justify-content: center;
 }
 
-/* Estilo para os links dos ícones */
-.acao-anotacao {
-  color: #7f8c8d;
-  font-size: 16px;
-  transition: color 0.2s ease;
+/* --- Páginas de Formulário (Login, Cadastro) --- */
+.voltar {
+  text-align: left;
+  margin-bottom: 25px;
 }
-.acao-anotacao:hover {
-  color: #2c3e50;
+.voltar a {
+  text-decoration: none;
+  color: #555;
+  font-weight: bold;
+  font-size: 25px;
+}
+.voltar a:hover {
+  text-decoration: underline;
+  color: #000;
+}
+.zona_perigo {
+  text-align: left;
+}
+.zona_perigo h3 {
+  border: none;
 }
 
-/*---- Estilo para Menus DROPDOWN ----*/
-
-/* Garante que o painel principal sirva de âncora para o menu de ações da página */
-.painel-principal {
-  position: relative;
-}
-
-/* Posiciona o menu de ações da página no canto superior direito */
+/* --- Dashboard --- */
 .page-actions-dropdown {
   position: absolute;
   top: 20px;
@@ -327,92 +367,52 @@ p {
 .page-actions-dropdown .dropdown-toggle {
   font-size: 19px;
 }
-
-/* O container principal de qualquer dropdown */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* O botão que abre o menu (engrenagem ou 3 pontinhos) */
-.dropdown-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #7f8c8d;
-  font-size: 16px;
-  padding: 5px;
-}
-.dropdown-toggle:hover {
-  color: #2c3e50;
-}
-
-/* O menu que fica escondido */
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  right: 5px;
-  top: 110%;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  border-radius: 5px;
-  z-index: 10;
-  padding: 5px 0;
-  border: 1px solid #eee;
-}
-
-/* Classe adicionada via JavaScript para mostrar o menu */
-.dropdown-menu.active {
-  display: block;
-}
-
-/* Os links dentro do menu */
-.dropdown-item {
-  color: black;
-  padding: 10px 15px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  white-space: nowrap;
-}
-.dropdown-item:hover {
-  background-color: #f1f1f1;
-}
-.dropdown-item i {
-  margin-right: 10px;
-  width: 20px;
-  text-align: center;
-}
-
-/* Linha divisória dentro do menu */
-.dropdown-divider {
-  height: 1px;
-  margin: 0.5rem 0;
-  overflow: hidden;
-  background-color: #e9ecef;
-}
-
-/*---- Etilos para TAGS ----*/
-
-.tags-container {
-  margin-top: 8px;
-}
-.tag-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #7f8c8d;
-  border-radius: 10px;
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-
-/*---- Estilo para CHECKBOX ----*/
-
-.selecao-anotacao{
+.selecao-anotacao {
   padding-right: 15px;
+}
+.container-acoes-selecao {
+  display: none;
+  margin-bottom: 15px;
+}
+.grupo-filtro {
+  margin-bottom: 30px;
+}
+
+/* --- Página de Perfil --- */
+.painel-perfil {
+  text-align: left;
+}
+.actions-perfil {
+  justify-content: flex-start;
+}
+.info-perfil p {
+  margin-bottom: 10px;
+}
+
+/* --- Página da Lixeira --- */
+.form-lixeira-restaurar {
+  margin-right: 10px;
+}
+.actions-lixeira {
+  justify-content: flex-end;
+}
+
+/* --- Página de Confirmação --- */
+.item-confirmacao {
+  margin-bottom: 30px;
+}
+
+
+/* === CLASSES UTILITÁRIAS === */
+.margin-top-20 {
+  margin-top: 20px;
+}
+.margin-top-30 {
+  margin-top: 30px;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
 }
