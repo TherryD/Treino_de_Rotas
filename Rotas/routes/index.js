@@ -6,6 +6,11 @@ const showdown = require('showdown');
 const PDFDocument = require('pdfkit');
 const {isAuthorized} = require('../middleware/autenticacao')
 
+const createDOMPurify = require('dompurify')
+const {JSDOM} = require('jsdom')
+const window = new JSDOM('').window
+const DOMPurify = createDOMPurify(window)
+
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
   res.render('index', {title: "Página Inicial", messages: req.flash('error')});
@@ -196,7 +201,10 @@ router.get("/:uid/:nid",isAuthorized, async (req, res, next) =>{
     if (anotacoes.length > 0) {
       const anotacao = anotacoes[0]
       const converter = new showdown.Converter()
-      anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao || '')
+
+      const htmlsujo = converter.makeHtml(anotacao.descricao || '')
+      const htmlLimpo = DOMPurify.sanitize(htmlsujo)
+      anotacao.descricaoHtml = htmlLimpo
       res.render('ver_anotacao', {
         usuario: req.session.user,
         anotacao: anotacao
