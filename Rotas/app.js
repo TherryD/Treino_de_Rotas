@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -20,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-  secret: 'Seu_segredo_Super_Secreto',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {secure: false}
