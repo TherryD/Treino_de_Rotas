@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const showdown = require('showdown');
 const PDFDocument = require('pdfkit');
-const removeMd = require('remove-markdown')
+const {isAuthorized} = require('../middleware/autenticacao')
 
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
@@ -40,195 +40,145 @@ router.get('/logout', (req, res, next) =>{
 })
 
 //rota GET para o perfil de um usuario (/:uid/perfil)
-router.get('/:uid/perfil', (req, res, next) =>{
-  if (req.session.user && req.session.user.id == req.params.uid) {
-    res.render('perfil', {usuario: req.session.user})
-  } else{
-    req.flash('error', 'Acesso não autorizado.')
-    res.redirect('/login')
-  }
+router.get('/:uid/perfil', isAuthorized, (req, res, next) =>{
+  res.render('perfil', {usuario: req.session.user})
 })
 
 //rota GET para a lixeira (/:uid/lixeira)
-router.get('/:uid/lixeira', async (req, res, next) =>{
+router.get('/:uid/lixeira',isAuthorized, async (req, res, next) =>{
   try{
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const userId = req.session.user.id
-      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC "
-      const [anotacoes] = await db.query(sql, [userId])
+    const userId = req.session.user.id
+    const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC "
+    const [anotacoes] = await db.query(sql, [userId])
 
-      res.render('lixeira', {
-        usuario: req.session.user,
-        anotacoes: anotacoes
-      })
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    res.render('lixeira', {
+      usuario: req.session.user,
+      anotacoes: anotacoes
+    })
   } catch (error) {next(error)}
 })
 
 //rota GET para editar um perfil (/:uid/perfil/editar)
-router.get('/:uid/perfil/editar', (req, res, next) =>{
-  if (req.session.user && req.session.user.id == req.params.uid) {
-    res.render('editar_perfil', {usuario: req.session.user})
-  } else{
-    req.flash('error', 'Acesso não autorizado.')
-    res.redirect('/login')
-  }
+router.get('/:uid/perfil/editar',isAuthorized, (req, res, next) =>{
+  res.render('editar_perfil', {usuario: req.session.user})
 })
 
 //rota GET para excluir um perfil (/:uid/perfil/excluir)
-router.get("/:uid/perfil/excluir", (req, res, next) =>{
-  if(req.session.user && req.session.user.id == req.params.uid) {
-    res.render('excluir_perfil', {usuario: req.session.user})
-  }else{
-    req.flash('error', 'Acesso não autorizado.')
-    res.redirect('/login')
-  }
+router.get("/:uid/perfil/excluir",isAuthorized, (req, res, next) =>{
+  res.render('excluir_perfil', {usuario: req.session.user})
 })
 
 //rota GET para exportar em txt (/:uid/exportar/txt)
-router.get('/:uid/exportar/txt', async (req, res, next) =>{
+router.get('/:uid/exportar/txt',isAuthorized, async (req, res, next) =>{
   try{
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const userId = req.session.user.id
-      const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NULL ORDER BY nome ASC"
-      const [anotacoes] = await db.query(sql, [userId])
+    const userId = req.session.user.id
+    const sql = "SELECT * FROM anotacoes WHERE user_id = ? AND deleted_at IS NULL ORDER BY nome ASC"
+    const [anotacoes] = await db.query(sql, [userId])
 
-      let fileContent = `Anotações de ${req.session.user.nome}\n`
-      fileContent += `Exportado em: ${new Date().toLocaleString('pt-BR')}\n\n`
-      fileContent += "=========================================\n\n"
+    let fileContent = `Anotações de ${req.session.user.nome}\n`
+    fileContent += `Exportado em: ${new Date().toLocaleString('pt-BR')}\n\n`
+    fileContent += "=========================================\n\n"
 
-      anotacoes.forEach(anotacao =>{
-        fileContent += `TÍTULO: ${anotacao.nome}\n`
-        fileContent += `-------------------------------\n`
-        fileContent += `${anotacao.descricao || 'Nenhuma descrição.'}\n\n`
-        fileContent += "==========================================\n\n"
-      })
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8')
-      res.send(fileContent)
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    anotacoes.forEach(anotacao =>{
+      fileContent += `TÍTULO: ${anotacao.nome}\n`
+      fileContent += `-------------------------------\n`
+      fileContent += `${anotacao.descricao || 'Nenhuma descrição.'}\n\n`
+      fileContent += "==========================================\n\n"
+    })
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+    res.send(fileContent)
   } catch (error) {next(error)}
 })
 
 //rota GET para exportar em pdf (/:uid/exportar/pdf)
-router.get('/:uid/exportar/pdf', async (req, res, next) =>{
+router.get('/:uid/exportar/pdf',isAuthorized, async (req, res, next) =>{
   try{
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const userId = req.session.user.id
-      const sql =`
-        SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome SEPARATOR ', ') AS tags
-        FROM anotacoes
-        LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
-        LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
-        WHERE anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
-        GROUP BY anotacoes.id 
-        ORDER BY anotacoes.updated_at DESC
-      `
+    const userId = req.session.user.id
+    const sql =`
+      SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome SEPARATOR ', ') AS tags
+      FROM anotacoes
+      LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+      LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+      WHERE anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
+      GROUP BY anotacoes.id 
+      ORDER BY anotacoes.updated_at DESC
+    `
 
-      const[anotacoes] = await db.query(sql, [userId])
-      const doc = new PDFDocument({margin: 50})
+    const[anotacoes] = await db.query(sql, [userId])
+    const doc = new PDFDocument({margin: 50})
 
-      res.setHeader('Content-Type', 'application/pdf')
-      res.setHeader('Content-Disposition', 'attachment; filename=anotacoes.pdf')
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Content-Disposition', 'attachment; filename=anotacoes.pdf')
       
-      doc.pipe(res)
-      doc.fontSize(24).font('Helvetica-Bold').text('Minhas Anotações', {align: 'center'})
-      doc.moveDown(2)
+    doc.pipe(res)
+    doc.fontSize(24).font('Helvetica-Bold').text('Minhas Anotações', {align: 'center'})
+    doc.moveDown(2)
 
-      const converter = new showdown.Converter();
+    const converter = new showdown.Converter();
 
-      anotacoes.forEach(anotacao =>{
-        doc.fontSize(18).font('Helvetica-Bold').text(anotacao.nome)
+    anotacoes.forEach(anotacao =>{
+      doc.fontSize(18).font('Helvetica-Bold').text(anotacao.nome)
+      doc.moveDown(0.5)
+
+      if (anotacao.tags) {
+        doc.fontSize(10).font('Helvetica').fillColor('grey').text(`Etiquetas: ${anotacao.tags}`)
         doc.moveDown(0.5)
-
-        if (anotacao.tags) {
-          doc.fontSize(10).font('Helvetica').fillColor('grey').text(`Etiquetas: ${anotacao.tags}`)
-          doc.moveDown(0.5)
-        }
+      }
         
-        doc.fillColor('black')
+      doc.fillColor('black')
 
-        const descricaoHtml = converter.makeHtml(anotacao.descricao || '')
-        const descricaoLimpa = descricaoHtml.replace(/<[^>]*>/g, '')
+      const descricaoHtml = converter.makeHtml(anotacao.descricao || '')
+      const descricaoLimpa = descricaoHtml.replace(/<[^>]*>/g, '')
         
-        doc.fontSize(12).font('Helvetica').text(descricaoLimpa)
-        doc.moveDown(1)
-        doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke()
-        doc.moveDown(1)
-      })
-      doc.end()
-    } else{
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+      doc.fontSize(12).font('Helvetica').text(descricaoLimpa)
+      doc.moveDown(1)
+      doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke()
+      doc.moveDown(1)
+    })
+    doc.end()
   } catch (error){
     console.error("ERRO ao gerar PDF:", error)
     next(error)}
 })
 
 //rota GET para excluir uma anotação (/:uid/:nid/excluir)
-router.get("/:uid/:nid/excluir", async (req, res, next) =>{
+router.get("/:uid/:nid/excluir",isAuthorized, async (req, res, next) =>{
   try {
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params
-      const [rows] = await db.query("SELECT * FROM anotacoes WHERE id = ? AND user_id = ? ", [nid, uid])
+    const {uid, nid} = req.params
+    const [rows] = await db.query("SELECT * FROM anotacoes WHERE id = ? AND user_id = ? ", [nid, uid])
       
-      if (rows.length > 0) {
-        const anotacao = rows[0]
-        res.render('excluir_anotacao', {
-          usuario: req.session.user,
-          anotacao: anotacao
-        })
-      } else { return next()
-      }
-    } else{
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    if (rows.length > 0) {
+      const anotacao = rows[0]
+      res.render('excluir_anotacao', {
+        usuario: req.session.user,
+        anotacao: anotacao
+      })
+    } else { return next()}
   } catch (error) {
     next(error)
   }
 })
 
 //rota GET para editar uma anotação (/:uid/:nid/editar)
-router.get("/:uid/:nid/editar", async (req, res, next) =>{
+router.get("/:uid/:nid/editar",isAuthorized, async (req, res, next) =>{
   try {
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params;
-      const sql = `
-        SELECT
-          anotacoes.*,
-          GROUP_CONCAT(etiquetas.nome) AS tags
-        FROM
-          anotacoes
-        LEFT JOIN
-          anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
-        LEFT JOIN 
-          etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
-        WHERE
-          anotacoes.id = ? AND anotacoes.user_id = ?
-        GROUP BY
-          anotacoes.id
-      `
-      const [anotacoes] = await db.query(sql, [nid, uid])
+    const {uid, nid} = req.params;
+    const sql = `
+      SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome) AS tags
+      FROM anotacoes
+      LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+      LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+      WHERE anotacoes.id = ? AND anotacoes.user_id = ?
+      GROUP BY anotacoes.id
+    `
+    const [anotacoes] = await db.query(sql, [nid, uid])
 
-      if (anotacoes.length > 0) {
-        res.render('editar_anotacao', {
-          usuario: req.session.user,
-          anotacao: anotacoes[0]
-        })
-      } else {
-        return next()
-      }
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    if (anotacoes.length > 0) {
+      res.render('editar_anotacao', {
+        usuario: req.session.user,
+        anotacao: anotacoes[0]
+      })
+    } else {return next()}
   } catch (error) {
     next(error)
   }
@@ -236,29 +186,22 @@ router.get("/:uid/:nid/editar", async (req, res, next) =>{
 })
 
 //rota GET
-router.get("/:uid/:nid", async (req, res, next) =>{
+router.get("/:uid/:nid",isAuthorized, async (req, res, next) =>{
   try {
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const userId = req.session.user.id
-      const notaId = req.params.nid
-      const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ? "
-      const [anotacoes] = await db.query(sql, [notaId, userId])
+    const userId = req.session.user.id
+    const notaId = req.params.nid
+    const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ? "
+    const [anotacoes] = await db.query(sql, [notaId, userId])
 
-      if (anotacoes.length > 0) {
-        const anotacao = anotacoes[0]
-        const converter = new showdown.Converter()
-        anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao || '')
-        res.render('ver_anotacao', {
-          usuario: req.session.user,
-          anotacao: anotacao
-        })
-      } else {
-        return next()
-      }
-    } else {
-      req.flash('error', 'Você precisa precisa estar logado para ver está página.')
-      res.redirect('/login')
-    } 
+    if (anotacoes.length > 0) {
+      const anotacao = anotacoes[0]
+      const converter = new showdown.Converter()
+      anotacao.descricaoHtml = converter.makeHtml(anotacao.descricao || '')
+      res.render('ver_anotacao', {
+        usuario: req.session.user,
+        anotacao: anotacao
+      })
+    } else {return next()}
   } catch (error) {
     console.error("ERRO ao buscar a anotação.", error)
     next(error)
@@ -266,38 +209,25 @@ router.get("/:uid/:nid", async (req, res, next) =>{
 })
 
 //rota GET 
-router.get("/:uid", async (req, res, next) =>{
+router.get("/:uid",isAuthorized, async (req, res, next) =>{
   try{
-    if (req.session.user && req.session.user.id == req.params.uid){
-      const userId = req.session.user.id
-      const sql = `
-        SELECT 
-          anotacoes.*, 
-          GROUP_CONCAT(etiquetas.nome) AS tags
-        FROM 
-          anotacoes
-        LEFT JOIN
-          anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
-        LEFT JOIN
-          etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
-        WHERE
-          anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
-        GROUP BY
-          anotacoes.id
-        ORDER BY
-          anotacoes.updated_at DESC
-        `          
-      const [anotacoes] = await db.query(sql, [userId])
+    const userId = req.session.user.id
+    const sql = `
+      SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome) AS tags
+      FROM anotacoes
+      LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+      LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+      WHERE anotacoes.user_id = ? AND anotacoes.deleted_at IS NULL
+      GROUP BY anotacoes.id
+      ORDER BY anotacoes.updated_at DESC
+    `          
+    const [anotacoes] = await db.query(sql, [userId])
 
-      console.log(`Encontradas ${anotacoes.length} anotações para o usuário ${userId}.`)
-      res.render('dashboard', {
-        usuario: req.session.user,
-        anotacoes: anotacoes 
-      })
-    } else {
-      req.flash('error', 'Você precisa logar para estar na próxima página.')
-      res.redirect('/login')
-    }
+    console.log(`Encontradas ${anotacoes.length} anotações para o usuário ${userId}.`)
+    res.render('dashboard', {
+      usuario: req.session.user,
+      anotacoes: anotacoes 
+    })
   } catch (error) {
     console.error('ERRO ao buscar anotações: ', error)
     next(error)
@@ -412,130 +342,104 @@ router.post('/criar', async (req, res, next) =>{
 })
 
 //rota POST para editar o perfil (/:uid/perfil/editar)
-router.post('/:uid/perfil/editar', async (req, res, next) =>{
+router.post('/:uid/perfil/editar',isAuthorized, async (req, res, next) =>{
   try {
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid} = req.params
-      const {nome} = req.body
+    const {uid} = req.params
+    const {nome} = req.body
 
-      const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
-      await db.query(sql, [nome, uid])
+    const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
+    await db.query(sql, [nome, uid])
 
-      req.session.user.nome = nome
-      console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
-      res.redirect(`/${uid}`)
-    } else {
-      req.flash('error', "Acesso não autorizado.")
-      res.redirect('/login')
-    }
+    req.session.user.nome = nome
+    console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
+    res.redirect(`/${uid}`)
   } catch (error) {next(error)}
 })
 
 //rota POST para editar um perfil (/:uid/perfil/excluir)
-router.post('/:uid/perfil/excluir', async (req, res, next) =>{
+router.post('/:uid/perfil/excluir',isAuthorized, async (req, res, next) =>{
   try{
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const {uid} = req.params
+    const {uid} = req.params
 
-      const sql = "DELETE FROM usuarios WHERE id = ?"
-      await db.query(sql, [uid])
+    const sql = "DELETE FROM usuarios WHERE id = ?"
+    await db.query(sql, [uid])
 
-      req.session.destroy(err =>{
-        if(err){
-          return next(err)
-        }
-        res.redirect('/')
+    req.session.destroy(err =>{
+      if(err){return next(err)}
+      res.redirect('/')
       })
-    } else{
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
   } catch(error){next(error)}
 })
 
 //rota POST para excluir todas as anotações (/:uid/anotacoes/excluir-todos)
-router.post('/:uid/anotacoes/excluir-todos', async (req, res, next) =>{
+router.post('/:uid/anotacoes/excluir-todos',isAuthorized, async (req, res, next) =>{
   try{
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const {uid} = req.params
-      const {noteIds} = req.body
+    const {uid} = req.params
+    const {noteIds} = req.body
 
-      if(!noteIds || !Array.isArray(noteIds) || noteIds.length === 0 ) {
-        return res.status(400).json({success: false, message: 'Nenhum ID de anotação fornecido.'})
-      }
-      const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id IN (?) AND user_id = ?"
-      const [result] = await db.query(sql, [noteIds, uid])
-      console.log(`${result.affectedRows} anotações enviadas para a lixeira.`)
-      res.json({success: true, message: 'Anotações excluídas com sucesso.'})
-    } else {
-      res.status(403).json({success: false, message: 'Acesso não autorizado.'})
+    if(!noteIds || !Array.isArray(noteIds) || noteIds.length === 0 ) {
+      return res.status(400).json({success: false, message: 'Nenhum ID de anotação fornecido.'})
     }
+    const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id IN (?) AND user_id = ?"
+    const [result] = await db.query(sql, [noteIds, uid])
+    console.log(`${result.affectedRows} anotações enviadas para a lixeira.`)
+    res.json({success: true, message: 'Anotações excluídas com sucesso.'})
   } catch (error){next(error)}
 })
 
 //rota POST para excluir uma anotação (/:uid/:nid/excluir)
-router.post('/:uid/:nid/excluir', async (req, res, next) =>{
+router.post('/:uid/:nid/excluir',isAuthorized, async (req, res, next) =>{
   try{
-    if(req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params
+    const {uid, nid} = req.params
 
-      const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id = ? AND user_id = ?"
-      await db.query(sql, [nid, uid])
-      console.log(`Anotação ${nid} enviada para a lixeira.`)
-      res.redirect(`/${uid}`)
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    const sql = "UPDATE anotacoes SET deleted_at = NOW() WHERE id = ? AND user_id = ?"
+    await db.query(sql, [nid, uid])
+    console.log(`Anotação ${nid} enviada para a lixeira.`)
+    res.redirect(`/${uid}`)
   } catch (error) { next(error)
   }
 })
 
 //rota POST para editar uma anotação (/:uid/:nid/editar)
-router.post('/:uid/:nid/editar', async (req, res, next) =>{
+router.post('/:uid/:nid/editar',isAuthorized, async (req, res, next) =>{
   try {
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params
-      const {nome, descricao, etiquetas: tagsString} = req.body
-      const sql = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
-      const values = [nome, descricao, nid, uid]
-      const connection = await db.getConnection()
+    const {uid, nid} = req.params
+    const {nome, descricao, etiquetas: tagsString} = req.body
+    const sql = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
+    const values = [nome, descricao, nid, uid]
+    const connection = await db.getConnection()
 
-      try{
-        await connection.beginTransaction()
-        const sqlUpdateNota = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
-        await connection.query(sqlUpdateNota, [nome, descricao, nid, uid])
-        await connection.query("DELETE FROM anotacao_etiqueta WHERE note_id = ?", [nid])
+    try{
+      await connection.beginTransaction()
+      const sqlUpdateNota = "UPDATE anotacoes SET nome = ?, descricao = ? WHERE id = ? AND user_id = ?"
+      await connection.query(sqlUpdateNota, [nome, descricao, nid, uid])
+      await connection.query("DELETE FROM anotacao_etiqueta WHERE note_id = ?", [nid])
       
-        if (tagsString && tagsString.trim() !== '') {
-          const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
+      if (tagsString && tagsString.trim() !== '') {
+        const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
 
-          for(const tagName of tagNames) {
-            let [rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ?", [tagName, uid])
-            let tagId
+        for(const tagName of tagNames) {
+          let [rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ?", [tagName, uid])
+          let tagId
 
-            if(rows.length > 0) {
-              tagId = rows[0].id
-            } else {
-              const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, uid])
-              tagId = resultTag.insertId
-            }
+          if(rows.length > 0) {
+            tagId = rows[0].id
+          } else {
+            const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, uid])
+            tagId = resultTag.insertId
+          }
 
             await connection.query("INSERT INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [nid, tagId])
-          }
         }
+      }
 
-        await connection.commit()
-        console.log(`Anotação ${nid} e suas etiquetas foram atualizadas com sucesso.`)
-        res.redirect(`/${uid}/${nid}`)
-      } catch (error) {
-        await connection.rollback()
-        throw error
-      } finally {connection.release()}
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+      await connection.commit()
+      console.log(`Anotação ${nid} e suas etiquetas foram atualizadas com sucesso.`)
+      res.redirect(`/${uid}/${nid}`)
+    } catch (error) {
+      await connection.rollback()
+      throw error
+    } finally {connection.release()}
   } catch (error) {
     console.error("ERRO ao atualizar anotação com tags:", error)
     next(error)
@@ -543,36 +447,26 @@ router.post('/:uid/:nid/editar', async (req, res, next) =>{
 })
 
 //rota POST para restaurar uma anotação (/:uid/:nid/restaurar)
-router.post("/:uid/:nid/restaurar", async (req, res, next) =>{
+router.post("/:uid/:nid/restaurar",isAuthorized, async (req, res, next) =>{
   try {
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params
-      const sql = "UPDATE anotacoes SET deleted_at = NULL WHERE id = ? AND user_id = ?"
-      await db.query(sql, [nid, uid]);
+    const {uid, nid} = req.params
+    const sql = "UPDATE anotacoes SET deleted_at = NULL WHERE id = ? AND user_id = ?"
+    await db.query(sql, [nid, uid]);
 
-      console.log(`Anotação ${nid} restaurada com sucesso.`)
-      res.redirect(`/${uid}/lixeira`)
-    } else {
-      req.flash('error', 'Acesso não autorizado. ')
-      res.redirect('/login')
-    }
+    console.log(`Anotação ${nid} restaurada com sucesso.`)
+    res.redirect(`/${uid}/lixeira`)
   } catch (error){next(error)}
 })
 
 //rota POST para excluir permanente uma anotação (/:uid/:nid/excluir-permanente)
-router.post('/:uid/:nid/excluir-permanente', async (req, res, next) =>{
+router.post('/:uid/:nid/excluir-permanente',isAuthorized, async (req, res, next) =>{
   try{
-    if (req.session.user && req.session.user.id == req.params.uid) {
-      const {uid, nid} = req.params
-      const sql = "DELETE FROM anotacoes WHERE id = ? AND user_id = ?"
-      await db.query(sql, [nid, uid])
+    const {uid, nid} = req.params
+    const sql = "DELETE FROM anotacoes WHERE id = ? AND user_id = ?"
+    await db.query(sql, [nid, uid])
 
-      console.log(`Anotação ${nid} excluída permanentemente.`)
-      res.redirect(`/${uid}/lixeira`)
-    } else {
-      req.flash('error', 'Acesso não autorizado.')
-      res.redirect('/login')
-    }
+    console.log(`Anotação ${nid} excluída permanentemente.`)
+    res.redirect(`/${uid}/lixeira`)
   } catch (error) {next(error)}
 })
 
