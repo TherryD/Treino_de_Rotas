@@ -1,17 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
 const db = require('../db');
-const showdown = require('showdown');
 const PDFDocument = require('pdfkit');
 const {isAuthorized} = require('../middleware/autenticacao')
 
-const createDOMPurify = require('dompurify')
-const {JSDOM} = require('jsdom')
-const window = new JSDOM('').window
-const DOMPurify = createDOMPurify(window)
-
 const noteController = require('../controllers/note.controller');
+const userController = require('../controllers/user.controller');
 
 // --- ROTAS GET ---
 router.get('/', function(req, res, next) {
@@ -19,14 +13,10 @@ router.get('/', function(req, res, next) {
 });
 
 // rota GET para o login
-router.get("/login", (req, res, next) =>{
-  res.render('login', {title: 'Login', messages: req.flash('error')})
-})
+router.get("/login", userController.renderLoginForm)
 
 //rota GET para o cadastro
-router.get("/cadastro", (req, res, next) =>{
-  res.render('cadastro', {title: 'Pagina de cadastro', messages:req.flash('error')})
-})
+router.get("/cadastro", userController.renderRegisterForm)
 
 //rota GET para o criar anotação
 router.get("/criar", (req, res, next) =>{
@@ -39,17 +29,10 @@ router.get("/criar", (req, res, next) =>{
 })
 
 //rota GET para o logout serve para voltar para a rota '/'
-router.get('/logout', (req, res, next) =>{
-  req.session.destroy(err =>{
-    if(err){return next(err)}
-    res.redirect('/')
-  })
-})
+router.get('/logout', userController.logout)
 
 //rota GET para o perfil de um usuario (/:uid/perfil)
-router.get('/:uid/perfil', isAuthorized, (req, res, next) =>{
-  res.render('perfil', {usuario: req.session.user})
-})
+router.get('/:uid/perfil', isAuthorized, userController.renderPerfil)
 
 //rota GET para a lixeira (/:uid/lixeira)
 router.get('/:uid/lixeira',isAuthorized, async (req, res, next) =>{
@@ -66,14 +49,10 @@ router.get('/:uid/lixeira',isAuthorized, async (req, res, next) =>{
 })
 
 //rota GET para editar um perfil (/:uid/perfil/editar)
-router.get('/:uid/perfil/editar',isAuthorized, (req, res, next) =>{
-  res.render('editar_perfil', {usuario: req.session.user})
-})
+router.get('/:uid/perfil/editar',isAuthorized, userController.renderEditPerfil )
 
 //rota GET para excluir um perfil (/:uid/perfil/excluir)
-router.get("/:uid/perfil/excluir",isAuthorized, (req, res, next) =>{
-  res.render('excluir_perfil', {usuario: req.session.user})
-})
+router.get("/:uid/perfil/excluir",isAuthorized, userController.renderDeletePerfil)
 
 //rota GET para exportar em txt (/:uid/exportar/txt)
 router.get('/:uid/exportar/txt',isAuthorized, async (req, res, next) =>{
@@ -185,100 +164,19 @@ router.get("/:uid",isAuthorized, async (req, res, next) =>{
 
 // --- ROTAS POST ---
 //rota POST para o login
-router.post("/login",  async (req, res, next) =>{
-  const {email, senha} = req.body
-
-  try {
-    const sql = "SELECT * FROM usuarios WHERE email = ?"
-    const [users] = await db.query(sql, [email])
-
-    if (users.length === 0) {
-      req.flash('error', 'E-mail ou senha inválidos.')
-      return res.redirect('/login')
-    }
-
-    const user = users[0];
-    const passwordMatch = await bcrypt.compare(senha, user.senha_hash)
-  
-    if (!passwordMatch) {
-      req.flash('error', 'E-mail ou senha inválidos.')
-      return res.redirect('/login')
-    }
-
-    console.log(`Login bem-sucedido para o usuário: ${user.nome}`)
-    req.session.user = {
-      id: user.id,
-      nome: user.nome,
-      email: user.email
-    }
-    res.redirect(`/${user.id}`)
-  } catch (error) {
-    console.error("ERRO durante o login", error)
-    next(error)
-  }
-
-})
+router.post("/login", userController.login)
 
 //rota POST para o cadastro
-router.post("/cadastro", async(req, res, next) =>{
-  const {nome, email, senha} = req.body
-
-  if(!senha){
-    return res.status(400).send("O campo senha não pode estar vazio.")
-  }
-
-  try{
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(senha, salt)
-
-    const sql = "INSERT INTO usuarios (nome, email, senha_hash) VALUES (?, ?, ?)"
-    const values = [nome, email, hash]
-
-    await db.query(sql, values)
-
-    console.log("Usuário cadastrado com Sucesso!")
-    res.redirect('/login')
-  } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      req.flash('error', 'Este e-mail já está em uso. Tente outro')
-      return res.redirect('/cadastro')
-    }
-    next(error)
-  }
-})
+router.post("/cadastro", userController.register)
 
 //rota POST para criar anotação
 router.post('/criar', noteController.create)
 
 //rota POST para editar o perfil (/:uid/perfil/editar)
-router.post('/:uid/perfil/editar',isAuthorized, async (req, res, next) =>{
-  try {
-    const {uid} = req.params
-    const {nome} = req.body
-
-    const sql = "UPDATE usuarios SET nome = ? WHERE id = ?"
-    await db.query(sql, [nome, uid])
-
-    req.session.user.nome = nome
-    console.log(`Perfil do usuário ${uid} atualizado para "${nome}".`)
-    res.redirect(`/${uid}`)
-  } catch (error) {next(error)}
-})
+router.post('/:uid/perfil/editar',isAuthorized, userController.updatePerfil)
 
 //rota POST para editar um perfil (/:uid/perfil/excluir)
-router.post('/:uid/perfil/excluir',isAuthorized, async (req, res, next) =>{
-  try{
-    const {uid} = req.params
-
-    const sql = "DELETE FROM usuarios WHERE id = ?"
-    await db.query(sql, [uid])
-
-    req.session.destroy(err =>{
-      if(err){return next(err)}
-      res.redirect('/')
-      })
-  } catch(error){next(error)}
-})
+router.post('/:uid/perfil/excluir',isAuthorized, userController.deletePerfil)
 
 //rota POST para excluir todas as anotações (/:uid/anotacoes/excluir-todos)
 router.post('/:uid/anotacoes/excluir-todos',isAuthorized, async (req, res, next) =>{
