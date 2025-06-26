@@ -20,7 +20,7 @@
         <% anotacoes.forEach(function(anotacao) { %>
           <li class="item-anotacao">
             <span class="nome-anotacao"><%= anotacao.nome %></span>
-            <div class="actions acations-lixeira" 
+            <div class="actions justify-end" 
               <form class="form-lixeira-restaurar" action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" >
                 <button type="submit" class="btn btn-secondary">Restaurar</button>
               </form>
