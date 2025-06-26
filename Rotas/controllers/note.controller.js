@@ -90,19 +90,22 @@ class NotaControlador {
             const [resultadoNota] = await connection.query(sqlNota, [nome, descricao, userId])
             const notaId = resultadoNota.insertId
 
-            if(tagsString) {
+            if(tagsString && tagsString.trim() !== '') {
                 const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
-                for (const tagName of tagNames) {
-                    let [rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ? ", [tagName, userId])
-                    let tagId
-
-                    if (rows.length > 0) {
-                        tagId = rows[0].id 
-                    } else{
+                if(tagNames.length > 0) {
+                    const espacosReser = tagNames.map(() => '?').join(',')
+                    const [existingTags] = await connection.query(`SELECT id, nome FROM etiquetas WHERE nome IN (${espacosReser}) AND user_id = ?`, [...tagNames, userId])
+                    const existingTagsMap = new Map(existingTags.map(t => [t.nome, t.id]))
+                    const tagsToCreate = tagNames.filter(name => !existingTagsMap.has(name))
+                    
+                    for (const tagName of tagsToCreate) {
                         const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, userId])
-                        tagId = resultTag.insertId
+                        existingTagsMap.set(tagName, resultTag.insertId)
                     }
-                    await connection.query("INSERT IGNORE INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [notaId, tagId])
+                    for(const tagName of tagNames) {
+                        const tagId = existingTagsMap.get(tagName)
+                        await connection.query("INSERT IGNORE INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [notaId, tagId])
+                    }
                 }
             }
             await connection.commit()
@@ -131,17 +134,21 @@ class NotaControlador {
 
             if (tagsString && tagsString.trim() !== '') {
                 const tagNames = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
-                for(const tagName of tagNames) {
-                    let[rows] = await connection.query("SELECT id FROM etiquetas WHERE nome = ? AND user_id = ?", [tagName, uid])
-                    let tagId
-                    if (rows.length > 0) {
-                        tagId = rows[0].id
-                    } else {
+                if(tagNames.length > 0) {
+                    const espacosReser = tagNames.map(() => '?').join(',')
+                    const [existingTags] = await connection.query(`SELECT id, nome FROM etiquetas WHERE nome IN (${espacosReser}) AND user_id = ?`, [...tagNames, uid])
+                    const existingTagsMap = new Map(existingTags.map(t => [t.nome, t.id]))
+                    const tagsToCreate = tagNames.filter(name => !existingTagsMap.has(name))
+
+                    for(const tagName of tagsToCreate) {
                         const [resultTag] = await connection.query("INSERT INTO etiquetas (nome, user_id) VALUES (?, ?)", [tagName, uid])
-                        tagId = resultTag.insertId
+                        existingTagsMap.set(tagName, resultTag.insertId)
                     }
-                    await connection.query("INSERT INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [nid, tagId])
-                }
+                    for(const tagName of tagNames) {
+                        const tagId = existingTagsMap.get(tagName)
+                        await connection.query("INSERT INTO anotacao_etiqueta (note_id, tag_id) VALUES (?, ?)", [nid, tagId])
+                    }
+                }    
             }
             await connection.commit()
             console.log(`Anotação ${nid} e suas etiquetas foram atualizadas com sucesso.`)
