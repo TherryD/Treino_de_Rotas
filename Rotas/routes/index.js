@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const showdown = require('showdown');
 const PDFDocument = require('pdfkit');
 const {isAuthorized} = require('../middleware/autenticacao')
 
