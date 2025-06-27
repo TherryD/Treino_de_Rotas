@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: 'senha_muito_forte_para_entrar_aqui',
   resave: false,
   saveUninitialized: true,
   cookie: {secure: false}
