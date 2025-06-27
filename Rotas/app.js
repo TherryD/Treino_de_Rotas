@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-  secret: 'um-segredo-bem-longo-e-dificil-de-adivinhar-98765',
+  secret:'um-segredo-bem-longo-e-dificil-de-adivinhar-98765',
   resave: false,
   saveUninitialized: true,
   cookie: {secure: false}
