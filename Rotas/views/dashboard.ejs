@@ -71,7 +71,11 @@
         <% }); %>
         </ul>
       <% } else { %>
-        <p>Você ainda não tem nenhuma anotação. Que tal criar a primeira?</p>
+       <div class="empty-state">
+        <i class="far fa-sticky-note empty-state-icon"></i>
+        <p class="empty-state-text">Você ainda não tem nenhuma anotação.</p>
+        <a href="/criar" class="btn btn-login">Criar minha primeira anotação</a>
+      </div>
       <% } %>
     <% } else { %>
       <h1>Erro</h1>

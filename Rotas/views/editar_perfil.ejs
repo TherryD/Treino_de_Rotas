@@ -9,7 +9,7 @@
 <body>
   <div class="painel-formulario">
     <div class="voltar">
-      <a href="/<%= usuario.id %>">&larr;</a>
+      <a href="/<%= usuario.id %>/perfil">&larr;</a>
     </div>
     <h1>Editar Perfil</h1>
 
@@ -18,10 +18,13 @@
         <label for="nome">Seu Nome</label>
         <input type="text" id="nome" name="nome" class="campo-formulario" value="<%= usuario.nome %>" required>
       </div>
-      <button type="submit" class="btn btn-primary btn-largo">Salvar Alterações</button>
+      <div class="actions margin-top-20">
+        <a href="/<%= usuario.id %>/perfil" class="btn btn-cadastro">Cancelar</a>
+        <button type="submit" class="btn btn-login">Salvar Alterações</button>
+      </div>
     </form>
     <hr class="separador-grande">
-    <div class="zona_perigo">
+    <div>
         <h3>Excluir Perfil</h3>
         <p>A exclusão da sua conta é permanente e removerá todas as suas anotações. </p>
         <a href="/<%= usuario.id %>/perfil/excluir" class="btn btn-excluir">Excluir minha conta</a>

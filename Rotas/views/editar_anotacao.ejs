@@ -27,7 +27,10 @@
         <label for="etiquetas">Etiquetas</label>
         <input type="text" id="etiquetas" name="etiquetas" class="campo-formulario" value="<%= typeof anotacao !== 'undefined' ? anotacao.tags : '' %>">
       </div>
-      <button type="submit" class="btn btn-primary btn-largo">Salvar Alterações</button>
+      <div class="actions actions-editar-anotacao">
+        <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="btn btn-cadastro">Cancelar</a>
+        <button type="submit" class="btn btn-login">Salvar Alterações</button>
+      </div>
     </form>
   </div>
   <script src="/javascripts/editor.js"></script>

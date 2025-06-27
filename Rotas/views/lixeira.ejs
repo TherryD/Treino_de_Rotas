@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lixeira</title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+
 </head>
 <body>
   <div class="painel-principal painel-principal--medio">
@@ -20,14 +22,18 @@
         <% anotacoes.forEach(function(anotacao) { %>
           <li class="item-anotacao">
             <span class="nome-anotacao"><%= anotacao.nome %></span>
-            <div class="actions justify-end" 
-              <form class="form-lixeira-restaurar" action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" >
-                <button type="submit" class="btn btn-secondary">Restaurar</button>
-              </form>
-              <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir-permanente" method="POST">
-                <button type="submit" class="btn btn-excluir">Excluir de Vez</button>
-              </form>
+            <div class="dropdown">
+              <button class="dropdown-toggle" title="Ações"><i class="fas fa-ellipsis-v"></i></button>
+              <div class="dropdown-menu">
+                <form action="/<%= usuario.id %>/<%= anotacao.id %>/restaurar" method="POST" class="dropdown-form">
+                  <button type="submit" class="dropdown-item"><i class="fas fa-trash-restore-alt"></i> Restaurar</button>
+                </form>
+                <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir-permanente" method="POST" class="dropdown-form">
+                  <button type="submit" class="dropdown-item dropdown-item-danger"><i class="fas fa-trash"></i> Excluir permanente</button>
+                </form>
+              </div>
             </div>
+
           </li>
         <% }); %>
       </ul>
@@ -35,5 +41,6 @@
       <p>A lixeira está vazia.</p>
     <% } %>
   </div>
+  <script src="/javascripts/dropdown.js"></script>
 </body>
 </html>

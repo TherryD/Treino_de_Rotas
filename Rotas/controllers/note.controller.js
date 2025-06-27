@@ -57,7 +57,14 @@ class NotaControlador {
         try{
             const userId = req.session.user.id
             const notaId = req.params.nid 
-            const sql = "SELECT * FROM anotacoes WHERE id = ? AND user_id = ?"
+            const sql =`
+                SELECT anotacoes.*, GROUP_CONCAT(etiquetas.nome SEPARATOR ', ') AS tags
+                FROM anotacoes
+                LEFT JOIN anotacao_etiqueta ON anotacoes.id = anotacao_etiqueta.note_id
+                LEFT JOIN etiquetas ON anotacao_etiqueta.tag_id = etiquetas.id
+                WHERE anotacoes.id = ? AND anotacoes.user_id = ?
+                GROUP BY anotacoes.id
+            `
             const [anotacoes] = await db.query(sql, [notaId, userId])
 
             if(anotacoes.length > 0) {
@@ -221,11 +228,11 @@ class NotaControlador {
     //Método para RESTAURAR anotação da lixeira
     async restore (req, res, next) {
         try{
-            const {uid, nid} = req.params
+            const {nid, uid} = req.params
             const sql = "UPDATE anotacoes SET deleted_at = NULL WHERE id = ? AND user_id = ?"
-            await db.redirect(sql, [nid, uid])
+            await db.query(sql, [nid, uid])
             console.log(`Anotação ${nid} restaurada com sucesso.`)
-            res.redirect(`/${req.params.uid}/lixeira`)
+            res.redirect(`/${uid}/lixeira`)
         } catch (error) {next(error)}
     }
 

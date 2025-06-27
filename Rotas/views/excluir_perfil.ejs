@@ -15,9 +15,9 @@
     <p>Você tem certeza que deseja excluir sua conta, <strong><%= usuario.nome %></strong>?</p>
 
     <form action="/<%= usuario.id %>/perfil/excluir" method="POST">
-      <div class="actions acations-exclusao">
+      <div class="actions">
         <a href="/<%= usuario.id %>/perfil" class="btn btn-secondary">Não, quero voltar</a>
-        <button type="submit" class="btn btn-danger">Sim, excluir minha conta permanentemente</button>
+        <button type="submit" class="btn btn-excluir">Sim, excluir minha conta permanentemente</button>
       </div>
     </form>
   </div>

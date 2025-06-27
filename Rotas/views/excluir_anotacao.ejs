@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confirmar Exclusão</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+
 </head>
 <body>
   <div class="painel-principal painel-principal--pequeno">
@@ -16,7 +18,7 @@
 
     <form action="/<%= usuario.id %>/<%= anotacao.id %>/excluir" method="POST">
       <div class="actions">
-        <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="btn btn-secondary">Cancelar</a>
+        <a href="/<%= usuario.id %>/<%= anotacao.id %>" class="btn btn-cadastro">Cancelar</a>
         <button type="submit" class="btn btn-excluir">Sim, Excluir</button>
       </div>
     </form>

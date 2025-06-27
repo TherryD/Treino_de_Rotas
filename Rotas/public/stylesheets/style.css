@@ -58,7 +58,7 @@ hr.separador-grande {
 
 /* === COMPONENTES === */
 
-/* --- Botões --- */
+/* Botões */
 .btn {
   display: inline-block;
   padding: 12px 25px;
@@ -83,24 +83,31 @@ hr.separador-grande {
 .btn-cadastro {
   background-color: #f1f3f3;
   color: #2b3a49;
-  border: 1px solid #828688;
+  border: 1px solid #d1d5da;
 }
 .btn-cadastro:hover {
-  background-color: #b9bbbb;
+  background-color: #e6ebf1;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
 .btn-excluir {
-  background-color: #ff402b;
+  background-color: #d73a49;
   color: white;
 }
 .btn-excluir:hover {
-  background-color: #a5291c;
+  background-color: #cb2431;
 }
 .btn-largo {
   width: 100%;
   padding: 15px;
 }
 
-/* --- Formulários --- */
+/* Formulários */
 .grupo-formulario {
   margin-bottom: 20px;
   text-align: left;
@@ -137,7 +144,7 @@ hr.separador-grande {
   text-decoration: underline;
 }
 
-/* --- Alertas --- */
+/* Alertas */
 .alerta-erro {
   padding: 15px;
   margin-bottom: 20px;
@@ -148,7 +155,7 @@ hr.separador-grande {
   text-align: center;
 }
 
-/* --- Listas --- */
+/* Listas */
 .lista-anotacoes {
   list-style-type: none;
   padding: 0;
@@ -178,7 +185,7 @@ hr.separador-grande {
   font-size: 18px;
 }
 
-/* --- Dropdown --- */
+/* Dropdown */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -218,6 +225,13 @@ hr.separador-grande {
   align-items: center;
   font-size: 14px;
   white-space: nowrap;
+  /* Reset para botões parecerem links */
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
 }
 .dropdown-item:hover {
   background-color: #f1f1f1;
@@ -227,14 +241,27 @@ hr.separador-grande {
   width: 20px;
   text-align: center;
 }
+.dropdown-item.dropdown-item-danger {
+  color: #a5291c;
+}
+.dropdown-item.dropdown-item-danger:hover {
+  color: white;
+  background-color: #a5291c;
+}
 .dropdown-divider {
   height: 1px;
   margin: 0.5rem 0;
   overflow: hidden;
   background-color: #e9ecef;
 }
+.dropdown-form {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
 
-/* --- Tags --- */
+
+/* Tags */
 .tags-container {
   margin-top: 8px;
 }
@@ -250,7 +277,7 @@ hr.separador-grande {
   margin-bottom: 5px;
 }
 
-/* --- Conteúdo Renderizado (Markdown) --- */
+/* Conteúdo Renderizado (Markdown) */
 .descricao-completa {
   margin-top: 20px;
   line-height: 1.7;
@@ -329,14 +356,14 @@ hr.separador-grande {
 
 /* === SEÇÕES E PÁGINAS ESPECÍFICAS === */
 
-/* --- Página Principal (index) --- */
+/* Ações Genéricas (centralizado) */
 .actions {
   display: flex;
   gap: 15px; 
   justify-content: center;
 }
 
-/* --- Páginas de Formulário (Login, Cadastro) --- */
+/* Formulários (botão voltar, zona de perigo) */
 .voltar {
   text-align: left;
   margin-bottom: 25px;
@@ -358,7 +385,7 @@ hr.separador-grande {
   border: none;
 }
 
-/* --- Dashboard --- */
+/* Dashboard */
 .page-actions-dropdown {
   position: absolute;
   top: 20px;
@@ -377,11 +404,13 @@ hr.separador-grande {
 .grupo-filtro {
   margin-bottom: 30px;
 }
-
-/* --- Página de Perfil --- */
-.painel-perfil {
-  text-align: left;
+.landing-icon {
+  font-size: 4em;
+  color: #428ec0;
+  margin-bottom: 25px;
 }
+
+/* Página de Perfil */
 .actions-perfil {
   justify-content: flex-start;
 }
@@ -389,17 +418,35 @@ hr.separador-grande {
   margin-bottom: 10px;
 }
 
-/* --- Página da Lixeira --- */
+/* Página da Lixeira */
 .form-lixeira-restaurar {
   margin-right: 10px;
 }
-.actions-lixeira {
-  justify-content: flex-end;
-}
 
-/* --- Página de Confirmação --- */
+/* Página de Confirmação */
 .item-confirmacao {
   margin-bottom: 30px;
+}
+
+/* Estado Vazio */
+.empty-state {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding: 30px;
+  color: #888;
+  background-color: #fafafa;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+.empty-state-icon {
+  font-size: 3.5em;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+.empty-state-text {
+  font-size: 1.1em;
+  color: #637272;
+  margin-bottom: 25px;
 }
 
 

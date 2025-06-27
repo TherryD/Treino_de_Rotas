@@ -2,7 +2,7 @@ const db = require('../db')
 const bcrypt = require('bcrypt')
 const Joi = require('joi')
 
-class UserController{
+class userController{
     //Método para RENDERIZAR a página cadastro
     renderRegisterForm(req, res, next) {
         res.render('cadastro', {title: 'Pagina de cadastro', messages: req.flash('error')})
@@ -156,4 +156,4 @@ class UserController{
 
 }
 
-module.exports = new UserController
+module.exports = new userController

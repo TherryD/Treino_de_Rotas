@@ -25,10 +25,13 @@
         <textarea id="descricao" name="descricao" class="campo-formulario" rows="10"></textarea>
       </div>
       <div class="grupo-formulario">
-        <label for="etiquetas">Etiquetas</label>
+        <label for="etiquetas">Etiquetas (separados por vírgula)</label>
         <input type="text" id="etiquetas" name="etiquetas" class="campo-formulario" value="<%= typeof anotacao !== 'undefined' ? anotacao.tags : '' %>">
       </div>
-      <button type="submit" class="btn btn-primary btn-largo">Salvar Anotação</button>
+      <div class="actions margin-top-20">
+        <a href="/<%= usuario.id %>" class="btn btn-cadastro">Cancelar</a>
+        <button type="submit" class="btn btn-login">Salvar Anotação</button>
+      </div>
     </form>
   </div>
   <script src="/javascripts/editor.js"></script>
